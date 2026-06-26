@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLATRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+        
+        body {
+            font-family: 'Press Start 2P', system-ui;
+            background: #0a0a0a;
+        }
+        
+        .balatro-bg {
+            background: linear-gradient(180deg, #1a0033 0%, #0a0a0a 100%);
+        }
+        
+        .card {
+            width: 54px;
+            height: 76px;
+            background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+            border: 4px solid #111;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            box-shadow: 0 6px 10px -3px rgb(0 0 0 / 0.4);
+            user-select: none;
+        }
+        
+        @media (min-width: 480px) {
+            .card {
+                width: 62px;
+                height: 86px;
+            }
+        }
+        
+        @media (min-width: 640px) {
+            .card {
+                width: 72px;
+                height: 102px;
+                border: 5px solid #111;
+                border-radius: 10px;
+            }
+        }
+        
+        .card.red { color: #e11d48; }
+        .card.black { color: #111; }
+        
+        .card:hover { transform: translateY(-4px); }
+        .card.selected {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 0 0 4px #ff00aa;
+            border-color: #ff00aa;
+        }
+        
+        .joker {
+            background: linear-gradient(145deg, #fef08c, #eab308);
+            border-color: #713f12;
+            color: #713f12;
+        }
+        
+        .stat {
+            background: #111;
+            border: 3px solid #fff;
+        }
+        
+        .neon-pink {
+            text-shadow: 0 0 10px #ff00aa, 0 0 20px #ff00aa;
+        }
+        
+        .hand-area {
+            background: #111;
+            border: 4px solid #fff;
+        }
+        
+        .discard-pile {
+            width: 44px;
+            height: 62px;
+            background: #222;
+            border: 3px solid #555;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            cursor: pointer;
+        }
+        
+        @media (min-width: 480px) {
+            .discard-pile {
+                width: 52px;
+                height: 72px;
+            }
+        }
+        
+        @media (min-width: 640px) {
+            .discard-pile {
+                width: 58px;
+                height: 82px;
+                font-size: 10px;
+            }
+        }
+        
+        .ability {
+            background: linear-gradient(145deg, #3b82f6, #1e40af);
+            border: 2px solid #fff;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .ability:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px #ff00aa;
+        }
+    </style>
+</head>
+<body class="balatro-bg text-white">
+    <div class="max-w-[1100px] mx-auto px-3 sm:px-4">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 py-4">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#ff00aa] flex items-center justify-center border-4 border-white">
+                    <i class="fa-solid fa-cards text-2xl sm:text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl sm:text-5xl font-black tracking-[-3px] neon-pink">SOLATRO</h1>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 sm:gap-3">
+                <select id="lang-select" onchange="changeLanguage()"
+                        class="bg-zinc-900 border-4 border-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
+                    <option value="en">EN</option>
+                    <option value="es">ES</option>
+                    <option value="fr">FR</option>
+                    <option value="de">DE</option>
+                    <option value="it">IT</option>
+                    <option value="pt">PT</option>
+                    <option value="zh">中文</option>
+                    <option value="ru">RU</option>
+                </select>
+                
+                <button onclick="showRules()" id="btn-rules"
+                        class="px-3 sm:px-5 py-1.5 sm:py-2.5 border-4 border-white hover:bg-white hover:text-black text-xs sm:text-sm">
+                    RULES
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-5">
+            <div class="stat p-2 sm:p-3 text-center">
+                <div class="text-[9px] sm:text-[10px] opacity-70" id="label-round">ROUND</div>
+                <div id="round" class="text-3xl sm:text-4xl font-black text-[#ff00aa]">1</div>
+            </div>
+            <div class="stat p-2 sm:p-3 text-center">
+                <div class="text-[9px] sm:text-[10px] opacity-70" id="label-target">TARGET</div>
+                <div id="target" class="text-3xl sm:text-4xl font-black">25</div>
+            </div>
+            <div class="stat p-2 sm:p-3 text-center">
+                <div class="text-[9px] sm:text-[10px] opacity-70" id="label-score">SCORE</div>
+                <div id="score" class="text-3xl sm:text-4xl font-black text-emerald-400">0</div>
+            </div>
+            <div class="stat p-2 sm:p-3 text-center">
+                <div class="text-[9px] sm:text-[10px] opacity-70" id="label-plays">PLAYS</div>
+                <div id="plays" class="text-3xl sm:text-4xl font-black">3</div>
+            </div>
+            <div class="stat p-2 sm:p-3 text-center">
+                <div class="text-[9px] sm:text-[10px] opacity-70" id="label-discards">DISCARDS</div>
+                <div id="discards" class="text-3xl sm:text-4xl font-black text-orange-400">3</div>
+            </div>
+        </div>
+
+        <!-- Top Bar -->
+        <div class="flex flex-col lg:flex-row justify-between gap-4 mb-4 px-1">
+            
+            <!-- Banked Jokers -->
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs text-zinc-400" id="label-banked-jokers">BANKED JOKERS</span>
+                </div>
+                <div id="joker-bank" class="flex gap-2 min-h-[42px]"></div>
+            </div>
+
+            <!-- Owned Abilities -->
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs text-zinc-400" id="label-owned-abilities">OWNED ABILITIES</span>
+                </div>
+                <div id="owned-abilities" class="flex gap-2 min-h-[42px]"></div>
+            </div>
+
+            <!-- Discard Piles -->
+            <div class="flex gap-4 sm:gap-6">
+                <div>
+                    <div class="text-xs text-zinc-400 mb-1" id="label-joker-discard">JOKER DISCARD</div>
+                    <div id="joker-discard-pile" onclick="showDiscardModal('joker')"
+                         class="discard-pile text-yellow-400">
+                        <span id="joker-discard-count">0</span>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="text-xs text-zinc-400 mb-1" id="label-card-discard">CARD DISCARD</div>
+                    <div id="card-discard-pile" onclick="showDiscardModal('card')"
+                         class="discard-pile text-white">
+                        <span id="card-discard-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hand -->
+        <div class="mb-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 px-1 mb-2">
+                <span class="font-bold text-sm sm:text-base" id="label-hand">YOUR HAND</span>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="discardSelected()" id="btn-discard"
+                            class="flex-1 sm:flex-none px-4 py-2 bg-orange-600 border-4 border-white hover:bg-orange-700 text-xs sm:text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-trash"></i> <span id="btn-discard-text">DISCARD</span>
+                    </button>
+                    <button onclick="playSelectedHand()" id="btn-play"
+                            class="flex-1 sm:flex-none px-5 py-2 bg-[#ff00aa] border-4 border-white hover:bg-pink-600 text-xs sm:text-sm flex items-center justify-center gap-2 font-bold">
+                        <i class="fa-solid fa-play"></i> <span id="btn-play-text">PLAY</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="hand-area" 
+                 class="hand-area p-3 sm:p-5 flex flex-wrap gap-2 sm:gap-3 justify-center min-h-[110px] sm:min-h-[140px]">
+            </div>
+        </div>
+
+        <div class="flex justify-between px-1">
+            <button onclick="endRound()" id="btn-end"
+                    class="px-4 sm:px-6 py-2 border-4 border-white text-xs hover:bg-white hover:text-black">
+                <span id="btn-end-text">END ROUND</span>
+            </button>
+            <div class="text-xs text-zinc-400 self-center" id="label-select">Select up to 5 cards</div>
+        </div>
+    </div>
+
+    <!-- Discard Modal -->
+    <div id="discard-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+        <div class="bg-zinc-900 border-4 border-white p-4 sm:p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
+            <h3 class="text-lg sm:text-xl font-black mb-4 text-center" id="discard-modal-title"></h3>
+            
+            <div id="discard-modal-content" class="grid grid-cols-4 sm:grid-cols-5 gap-2 sm:gap-3 mb-6">
+            </div>
+            
+            <button onclick="closeDiscardModal()" 
+                    class="w-full py-3 bg-white text-black font-bold border-4 border-white text-sm">
+                <span id="btn-close-discard">CLOSE</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Joker Choice Modal -->
+    <div id="joker-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+        <div class="bg-zinc-900 border-4 border-white p-4 sm:p-6 w-full max-w-sm">
+            <h3 class="text-center text-lg sm:text-xl font-black mb-4 text-yellow-400" id="joker-modal-title">CHOOSE JOKER VALUE</h3>
+            
+            <div class="mb-4">
+                <div class="text-xs mb-1 text-zinc-400" id="label-rank">RANK</div>
+                <div id="rank-choices" class="flex flex-wrap gap-1"></div>
+            </div>
+            
+            <div class="mb-6">
+                <div class="text-xs mb-1 text-zinc-400" id="label-suit">SUIT</div>
+                <div id="suit-choices" class="flex gap-2"></div>
+            </div>
+            
+            <div id="joker-error" class="text-red-500 text-xs mb-3 hidden">This card already exists in your hand!</div>
+            
+            <div class="flex gap-3">
+                <button onclick="cancelJokerChoice()" 
+                        class="flex-1 py-3 border-4 border-white hover:bg-zinc-800 text-sm">
+                    <span id="btn-joker-cancel">CANCEL</span>
+                </button>
+                <button onclick="confirmJokerChoice()" id="joker-confirm-btn"
+                        class="flex-1 py-3 bg-yellow-400 text-black font-bold border-4 border-white text-sm">
+                    <span id="btn-joker-confirm">CONFIRM</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rules-modal" onclick="hideRules()" 
+         class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="max-w-2xl w-full bg-zinc-900 border-4 border-white p-4 sm:p-6 text-xs sm:text-sm max-h-[85vh] overflow-y-auto">
+            <h2 class="text-xl sm:text-2xl font-black mb-4 text-[#ff00aa]" id="modal-rules-title">SOLATRO RULES</h2>
+            
+            <div class="space-y-4 leading-relaxed whitespace-pre-line" id="rules-content">
+            </div>
+            
+            <button onclick="hideRules()" 
+                    class="mt-6 w-full py-3 bg-white text-black font-bold border-4 border-white text-sm">
+                <span id="btn-close-rules">CLOSE</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Shop Modal -->
+    <div id="shop-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+        <div class="max-w-md w-full bg-zinc-900 border-4 border-white p-4 sm:p-6">
+            <h2 class="text-center text-2xl sm:text-3xl font-black mb-1 text-[#ff00aa]" id="modal-shop-title">BONUS SHOPPE</h2>
+            <div id="excess-text" class="text-center mb-4 sm:mb-5 text-base sm:text-lg"></div>
+            <div id="shop-list" class="space-y-2"></div>
+            <button onclick="closeShop()" id="btn-continue"
+                    class="mt-6 w-full py-3 bg-white text-black font-bold border-4 border-white text-sm">
+                <span id="btn-continue-text">CONTINUE TO NEXT ROUND</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Over -->
+    <div id="game-over-modal" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4">
+        <div class="text-center">
+            <div class="text-6xl sm:text-7xl mb-4">☠️</div>
+            <div class="text-4xl sm:text-5xl font-black mb-3" id="modal-gameover">GAME OVER</div>
+            <div class="mb-8 text-lg sm:text-xl">
+                <span id="label-reached">You reached round</span> 
+                <span id="final-round" class="text-[#ff00aa]"></span>
+            </div>
+            <button onclick="restartGame()" 
+                    class="px-8 sm:px-10 py-3 sm:py-4 bg-[#ff00aa] text-lg sm:text-xl font-black border-4 border-white">
+                <span id="btn-play-again">PLAY AGAIN</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let state = {};
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                round: "ROUND", target: "TARGET", score: "SCORE", plays: "PLAYS", discards: "DISCARDS",
+                hand: "YOUR HAND", discard: "DISCARD", play: "PLAY",
+                end: "END ROUND", select: "Select up to 5 cards", rules: "RULES",
+                shop: "BONUS SHOPPE", continue: "CONTINUE TO NEXT ROUND", gameover: "GAME OVER",
+                reached: "You reached round",
+                noItems: "No items available",
+                excess: "Excess Points",
+                extraCard: "Extra Card",
+                extraDiscard: "Extra Discard",
+                pocketPoints: "Pocket Points (cash in 25 points for the round)",
+                extraHand: "Extra Hand",
+                doubleScore: "Double Score",
+                shield: "Shield",
+                bankedJokers: "BANKED JOKERS",
+                ownedAbilities: "OWNED ABILITIES",
+                jokerDiscard: "JOKER DISCARD",
+                cardDiscard: "CARD DISCARD",
+                jokerDiscardPile: "JOKER DISCARD PILE",
+                cardDiscardPile: "CARD DISCARD PILE",
+                chooseJokerValue: "CHOOSE JOKER VALUE",
+                rank: "RANK",
+                suit: "SUIT",
+                cancel: "CANCEL",
+                confirm: "CONFIRM",
+                close: "CLOSE",
+                noCardsDiscarded: "No cards discarded yet",
+                cardAlreadyExists: "This card already exists in your hand!"
+            },
+            it: {
+                round: "ROUND", target: "OBIETTIVO", score: "PUNTEGGIO", plays: "GIOCATE", discards: "SCARTI",
+                hand: "LA TUA MANO", discard: "SCARTA", play: "GIOCA",
+                end: "FINE ROUND", select: "Seleziona fino a 5 carte", rules: "REGOLE",
+                shop: "NEGOZIO BONUS", continue: "CONTINUA", gameover: "GAME OVER",
+                reached: "Hai raggiunto il round",
+                noItems: "Nessun oggetto disponibile",
+                excess: "Punti in eccesso",
+                extraCard: "Extra Carta",
+                extraDiscard: "Scarto Extra",
+                pocketPoints: "Punti Tascabili (incassa 25 punti per il round)",
+                extraHand: "Mano Extra",
+                doubleScore: "Punteggio Doppio",
+                shield: "Scudo",
+                bankedJokers: "JOLLY IN BANCA",
+                ownedAbilities: "ABILITÀ POSSEDUTE",
+                jokerDiscard: "SCARTI JOLLY",
+                cardDiscard: "SCARTI CARTE",
+                jokerDiscardPile: "PILA SCARTI JOLLY",
+                cardDiscardPile: "PILA SCARTI CARTE",
+                chooseJokerValue: "SCEGLI VALORE JOLLY",
+                rank: "VALORE",
+                suit: "SEME",
+                cancel: "ANNULLA",
+                confirm: "CONFERMA",
+                close: "CHIUDI",
+                noCardsDiscarded: "Nessuna carta scartata",
+                cardAlreadyExists: "Questa carta è già nella tua mano!"
+            }
+        };
+
+        const rulesTranslations = {
+            en: `SOLATRO\n\nEVERYONE loves that popular addictive computer card game, and EVERYONE loves solitaire (obviously), so here's a cheeky way to play a SOLO version of that addictive computer card game with just a regular deck of cards, all by yourself on a Friday night!\n\nGOAL\nSurvive as many rounds as possible by reaching the score target for each round. Targets go up each round, and you use poker hands to earn points toward that target.\n\nSETUP\n- Use a standard 54-card deck, including 2 Jokers.\n- Shuffle the deck.\n- Keep a score sheet to track: round number, bonus points/carryover points from past rounds, and owned tokens. See Bonus Shop.\n\nROUND STRUCTURE\n- Round 1 target: 25 points.\n- Each new round: target increases by +25 points.\n  Round 2 = 50, Round 3 = 75, etc.\n- Start the round by drawing 8 cards into your hand.\n- You get 3 plays per round.\n- You also get 3 discard chances per round, and may discard 1-5 cards each time.\n- After a play or discard, draw back to your hand limit.\n- Play bonus items you've collected during the round.\n- After the round is done, shuffle hand cards and discards back into the deck.\n\nHAND SCORES\nHigh Card: 5\nPair: 10\nTwo Pair: 20\nThree of a Kind: 30\nStraight: 40\nFlush: 50\nFull House: 60\nFour of a Kind: 100\nStraight Flush: 125\nRoyal Flush: 150\n\nPLAYING CARDS\n- On each play, choose up to 5 cards to make a poker hand and record your score.\n- After 3 plays, total your scores.\n- If you meet or beat the round target, you advance.\n- If not, and you have no shield token, you DIE!\n\nJOKERS\n- Jokers are wildcards.\n- If drawn, bank it for later and draw a replacement.\n- A banked Joker can be added to any future play as a wildcard.\n- When used, it is discarded.\n- If you have a banked joker and another shows up, you lose BOTH!\n  Joke's on you DWEEB!\n\nLOSING\nThe game ends when you fail to meet the round's target and have no Shield token.\nYour score is the last round number you reached.\n\nBONUS SHOPPE\n- After the round any EXCESS points beyond the round target can be spent at the bonus shoppe.\n- You can only own 1 of each bonus at a time.\n- You keep your bonus items, but points don't last between rounds.\n\nBONUS SHOPPE ITEMS\nExtra Card: 10\nExtra Discard: 25\nPocket Points: 50 (cash in 25 points for the round)\nExtra Hand: 75\nDouble Score: 100\nShield: 150\n\nRANKS\nCat Food: 3 rounds\nLittle Dweeb: 5 rounds\nOfficial Dweeb: 7 rounds\nUltra Mega Uber Giga-Dweeb: 10+ rounds\n\nHope you had fun!\n\n-TechDweeb`,
+
+            it: `SOLATRO\n\nA tutti piace quel famoso gioco di carte al computer che crea dipendenza, e a TUTTI piace il solitario (ovviamente), quindi ecco un modo spiritoso per giocare una versione SOLO di quel gioco di carte che crea dipendenza con un normale mazzo di carte, tutto da solo un venerdì sera!\n\nOBIETTIVO\nSopravvivi il maggior numero di round possibile raggiungendo l'obiettivo di punteggio per ogni round. Gli obiettivi aumentano ogni round, e usi mani di poker per guadagnare punti verso quell'obiettivo.\n\nPREPARAZIONE\n- Usa un mazzo standard da 54 carte, inclusi 2 Jolly.\n- Mescola il mazzo.\n- Tieni un foglio dei punteggi per tracciare: numero del round, punti bonus/punti residui dai round precedenti e token posseduti. Vedi Negozio Bonus.\n\nSTRUTTURA DEL ROUND\n- Round 1 obiettivo: 25 punti.\n- Ogni nuovo round: l'obiettivo aumenta di +25 punti.\n  Round 2 = 50, Round 3 = 75, ecc.\n- Inizia il round pescando 8 carte nella tua mano.\n- Hai 3 giocate per round.\n- Hai anche 3 possibilità di scarto per round, e puoi scartare da 1 a 5 carte ogni volta.\n- Dopo una giocata o uno scarto, pesca di nuovo fino al limite della mano.\n- Usa gli oggetti bonus che hai collezionato durante il round.\n- Alla fine del round, rimetti le carte della mano e gli scarti nel mazzo e mescola.\n\nPUNTEGGI DELLE MANI\nHigh Card: 5\nCoppia: 10\nDoppia Coppia: 20\nTris: 30\nScala: 40\nColore: 50\nFull: 60\nPoker: 100\nScala Colore: 125\nScala Reale: 150\n\nGIOCARE LE CARTE\n- Ad ogni giocata, scegli fino a 5 carte per formare una mano di poker e registra il tuo punteggio.\n- Dopo 3 giocate, somma i tuoi punteggi.\n- Se raggiungi o superi l'obiettivo del round, avanzi.\n- Se non ci riesci e non hai un token Scudo, MORI!\n\nJOLLY\n- I Jolly sono wild card.\n- Se pescato, mettilo da parte per dopo e pesca una carta sostitutiva.\n- Un Jolly messo da parte può essere aggiunto a qualsiasi giocata futura come wild card.\n- Quando viene usato, viene scartato.\n- Se hai un Jolly da parte e ne esce un altro, PERDI ENTRAMBI!\n  Lo scherzo è su di te, Sfigato!\n\nSCONFITTA\nIl gioco finisce quando non raggiungi l'obiettivo del round e non hai il token Scudo.\nIl tuo punteggio è l'ultimo numero di round raggiunto.\n\nNEGOZIO BONUS\n- Dopo il round, i punti in ECCESSO oltre l'obiettivo del round possono essere spesi nel negozio bonus.\n- Puoi possedere solo 1 di ogni bonus alla volta.\n- Mantieni gli oggetti bonus, ma i punti non durano tra i round.\n\nOGGETTI DEL NEGOZIO BONUS\nExtra Carta: 10\nScarto Extra: 25\nPunti Tascabili: 50 (incassa 25 punti per il round)\nMano Extra: 75\nPunteggio Doppio: 100\nScudo: 150\n\nRANGHI\nCibo per Gatti: 3 round\nPiccolo Sfigato: 5 round\nSfigato Ufficiale: 7 round\nUltra Mega Uber Giga-Sfigato: 10+ round\n\nSpero ti sia divertito!\n\n-TechDweeb`
+        };
+
+        function changeLanguage() {
+            currentLang = document.getElementById('lang-select').value;
+            updateAllText();
+        }
+
+        function t(key) {
+            const lang = translations[currentLang] || translations.en;
+            return lang[key] || translations.en[key] || key;
+        }
+
+        function updateAllText() {
+            const elements = {
+                'label-round': 'round',
+                'label-target': 'target',
+                'label-score': 'score',
+                'label-plays': 'plays',
+                'label-discards': 'discards',
+                'label-hand': 'hand',
+                'label-select': 'select',
+                'label-banked-jokers': 'bankedJokers',
+                'label-owned-abilities': 'ownedAbilities',
+                'label-joker-discard': 'jokerDiscard',
+                'label-card-discard': 'cardDiscard',
+                'label-rank': 'rank',
+                'label-suit': 'suit',
+                'label-reached': 'reached'
+            };
+
+            for (let [id, key] of Object.entries(elements)) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = t(key);
+            }
+
+            const btnElements = {
+                'btn-rules': 'rules',
+                'btn-discard-text': 'discard',
+                'btn-play-text': 'play',
+                'btn-end-text': 'end',
+                'btn-continue-text': 'continue',
+                'btn-close-discard': 'close',
+                'btn-joker-cancel': 'cancel',
+                'btn-joker-confirm': 'confirm',
+                'btn-close-rules': 'close',
+                'btn-play-again': 'playAgain'
+            };
+
+            for (let [id, key] of Object.entries(btnElements)) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = t(key);
+            }
+
+            const modalElements = {
+                'modal-shop-title': 'shop',
+                'modal-gameover': 'gameover',
+                'joker-modal-title': 'chooseJokerValue'
+            };
+
+            for (let [id, key] of Object.entries(modalElements)) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = t(key);
+            }
+
+            const errorEl = document.getElementById('joker-error');
+            if (errorEl) errorEl.textContent = t('cardAlreadyExists');
+        }
+
+        function showRules() {
+            const content = document.getElementById('rules-content');
+            const rulesText = rulesTranslations[currentLang] || rulesTranslations.en;
+            content.innerHTML = rulesText.replace(/\n/g, '<br>');
+            document.getElementById('rules-modal').classList.remove('hidden');
+        }
+
+        function hideRules() {
+            document.getElementById('rules-modal').classList.add('hidden');
+        }
+
+        function createDeck() {
+            const suits = ['♠', '♥', '♦', '♣'];
+            const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+            let deck = [];
+            suits.forEach(suit => {
+                ranks.forEach(rank => {
+                    deck.push({ rank, suit, color: (suit === '♥' || suit === '♦') ? 'red' : 'black' });
+                });
+            });
+            deck.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
+            deck.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
+            return deck;
+        }
+
+        function shuffle(d) {
+            for (let i = d.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [d[i], d[j]] = [d[j], d[i]];
+            }
+        }
+
+        function drawCard() {
+            if (state.deck.length === 0) {
+                state.deck = createDeck();
+                shuffle(state.deck);
+            }
+            
+            let card = state.deck.pop();
+            
+            if (card.isJoker) {
+                if (state.bankedJokers >= 1) {
+                    state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
+                    state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
+                    state.bankedJokers = 0;
+                    updateDiscardCounts();
+                } else {
+                    state.bankedJokers = 1;
+                }
+                
+                if (state.deck.length === 0) {
+                    state.deck = createDeck();
+                    shuffle(state.deck);
+                }
+                card = state.deck.pop();
+            }
+            
+            return card;
+        }
+
+        function newGame() {
+            state = {
+                round: 1,
+                target: 25,
+                score: 0,
+                plays: 3,
+                discards: 3,
+                deck: createDeck(),
+                hand: [],
+                selected: [],
+                bankedJokers: 0,
+                bonuses: {},
+                abilities: [],
+                jokerDiscardPile: [],
+                cardDiscardPile: [],
+                shieldUsed: false
+            };
+            shuffle(state.deck);
+            drawHand();
+            updateUI();
+            updateAllText();
+            updateDiscardCounts();
+            renderAbilities();
+        }
+
+        function drawHand() {
+            state.hand = [];
+            for (let i = 0; i < 8; i++) {
+                state.hand.push(drawCard());
+            }
+            renderHand();
+            renderJokers();
+            updateUI();
+        }
+
+        function renderHand() {
+            const container = document.getElementById('hand-area');
+            container.innerHTML = '';
+            state.hand.forEach((card, index) => {
+                const el = document.createElement('div');
+                el.className = `card ${card.color} ${state.selected.includes(index) ? 'selected' : ''}`;
+                if (card.isJoker) {
+                    el.innerHTML = `<div class="text-3xl">🃏</div>`;
+                } else {
+                    el.innerHTML = `<div class="text-center"><div class="text-xs">${card.rank}</div><div class="text-3xl">${card.suit}</div></div>`;
+                }
+                el.onclick = () => toggleCard(index);
+                container.appendChild(el);
+            });
+        }
+
+        function toggleCard(index) {
+            const i = state.selected.indexOf(index);
+            if (i > -1) state.selected.splice(i, 1);
+            else if (state.selected.length < 5) state.selected.push(index);
+            renderHand();
+        }
+
+        function renderJokers() {
+            const container = document.getElementById('joker-bank');
+            container.innerHTML = '';
+            for (let i = 0; i < state.bankedJokers; i++) {
+                const el = document.createElement('div');
+                el.className = 'joker card flex items-center justify-center cursor-pointer';
+                el.style.width = '58px';
+                el.style.height = '82px';
+                el.innerHTML = `<div class="text-3xl">🃏</div>`;
+                el.onclick = () => openJokerChoice(i);
+                container.appendChild(el);
+            }
+        }
+
+        function openJokerChoice(jokerIndex) {
+            if (state.selected.length >= 5) return;
+            pendingJokerIndex = jokerIndex;
+            chosenJokerRank = null;
+            chosenJokerSuit = null;
+
+            const rankContainer = document.getElementById('rank-choices');
+            const suitContainer = document.getElementById('suit-choices');
+            rankContainer.innerHTML = '';
+            suitContainer.innerHTML = '';
+
+            const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+            const suits = [
+                { symbol: '♠', color: 'black' },
+                { symbol: '♥', color: 'red' },
+                { symbol: '♦', color: 'red' },
+                { symbol: '♣', color: 'black' }
+            ];
+
+            ranks.forEach(rank => {
+                const btn = document.createElement('button');
+                btn.textContent = rank;
+                btn.className = 'px-3 py-1 border border-white text-xs hover:bg-white hover:text-black';
+                btn.onclick = () => {
+                    chosenJokerRank = rank;
+                    document.querySelectorAll('#rank-choices button').forEach(b => b.classList.remove('bg-white', 'text-black'));
+                    btn.classList.add('bg-white', 'text-black');
+                    validateJokerChoice();
+                };
+                rankContainer.appendChild(btn);
+            });
+
+            suits.forEach(s => {
+                const btn = document.createElement('button');
+                btn.innerHTML = `<span class="${s.color === 'red' ? 'text-red-500' : ''} text-2xl">${s.symbol}</span>`;
+                btn.className = 'w-12 h-12 border-4 border-white flex items-center justify-center hover:bg-white';
+                btn.onclick = () => {
+                    chosenJokerSuit = s;
+                    document.querySelectorAll('#suit-choices button').forEach(b => b.classList.remove('!bg-white'));
+                    btn.classList.add('!bg-white');
+                    validateJokerChoice();
+                };
+                suitContainer.appendChild(btn);
+            });
+
+            document.getElementById('joker-error').classList.add('hidden');
+            document.getElementById('joker-modal').classList.remove('hidden');
+        }
+
+        function validateJokerChoice() {
+            const errorEl = document.getElementById('joker-error');
+            const confirmBtn = document.getElementById('joker-confirm-btn');
+            
+            if (!chosenJokerRank || !chosenJokerSuit) {
+                errorEl.classList.add('hidden');
+                confirmBtn.disabled = true;
+                return;
+            }
+
+            const exists = state.hand.some(card => 
+                card.rank === chosenJokerRank && 
+                card.suit === chosenJokerSuit.symbol
+            );
+
+            if (exists) {
+                errorEl.classList.remove('hidden');
+                confirmBtn.disabled = true;
+            } else {
+                errorEl.classList.add('hidden');
+                confirmBtn.disabled = false;
+            }
+        }
+
+        function confirmJokerChoice() {
+            if (!chosenJokerRank || !chosenJokerSuit) return;
+
+            state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
+            updateDiscardCounts();
+
+            const newCard = {
+                rank: chosenJokerRank,
+                suit: chosenJokerSuit.symbol,
+                color: chosenJokerSuit.color,
+                fromJoker: true
+            };
+
+            state.hand.push(newCard);
+            state.bankedJokers--;
+
+            document.getElementById('joker-modal').classList.add('hidden');
+            renderJokers();
+            renderHand();
+            updateUI();
+        }
+
+        function cancelJokerChoice() {
+            document.getElementById('joker-modal').classList.add('hidden');
+            pendingJokerIndex = null;
+        }
+
+        function renderAbilities() {
+            const container = document.getElementById('owned-abilities');
+            container.innerHTML = '';
+            
+            state.abilities.forEach((ability, index) => {
+                const el = document.createElement('div');
+                el.className = 'ability text-white text-center cursor-pointer';
+                el.innerHTML = `<div>${ability.name}</div>`;
+                el.onclick = () => useAbility(index);
+                container.appendChild(el);
+            });
+        }
+
+        function useAbility(index) {
+            const ability = state.abilities[index];
+            
+            if (ability.id === "extraCard") {
+                state.hand.push(drawCard());
+                renderHand();
+            } else if (ability.id === "extraDiscard") {
+                state.discards += 1;
+                updateUI();
+            } else if (ability.id === "extraHand") {
+                state.plays += 1;
+                updateUI();
+            } else if (ability.id === "pocketPoints") {
+                state.score += 25;
+                updateUI();
+            } else if (ability.id === "doubleScore") {
+                state.score *= 2;
+                updateUI();
+            } else if (ability.id === "shield") {
+                state.shieldUsed = true;
+                alert("Shield activated! You are protected from death this round.");
+            }
+            
+            state.abilities.splice(index, 1);
+            renderAbilities();
+        }
+
+        function getPokerScore(cards) {
+            if (!cards.length) return { score: 5, name: "High Card" };
+
+            const realCards = cards.filter(c => !c.isWild);
+            const rankValues = { '2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14 };
+            const ranks = realCards.map(c => rankValues[c.rank]);
+            const suits = realCards.map(c => c.suit);
+
+            const rankCount = {};
+            ranks.forEach(r => rankCount[r] = (rankCount[r] || 0) + 1);
+            const counts = Object.values(rankCount).sort((a,b) => b-a);
+
+            const isFlush = realCards.length >= 5 && suits.length > 0 && suits.every(s => s === suits[0]);
+
+            const royalRanks = [10, 11, 12, 13, 14];
+            let hasRoyal = false;
+            if (isFlush) {
+                const sorted = [...ranks].sort((a,b) => a-b);
+                if (sorted.length === 5 && sorted.every((r, i) => r === royalRanks[i])) {
+                    hasRoyal = true;
+                }
+            }
+
+            const uniqueRanks = [...new Set(ranks)].sort((a,b) => a-b);
+            let isStraight = false;
+            if (uniqueRanks.length >= 5) {
+                const min = Math.min(...uniqueRanks);
+                const max = Math.max(...uniqueRanks);
+                if (max - min <= 4) isStraight = true;
+            }
+
+            let score = 5;
+            let name = "High Card";
+
+            if (hasRoyal) { score = 150; name = "Royal Flush"; }
+            else if (counts[0] === 4) { score = 100; name = "Four of a Kind"; }
+            else if (counts[0] === 3 && counts[1] === 2) { score = 60; name = "Full House"; }
+            else if (isFlush && isStraight) { score = 125; name = "Straight Flush"; }
+            else if (isFlush) { score = 50; name = "Flush"; }
+            else if (isStraight) { score = 40; name = "Straight"; }
+            else if (counts[0] === 3) { score = 30; name = "Three of a Kind"; }
+            else if (counts[0] === 2 && counts[1] === 2) { score = 20; name = "Two Pair"; }
+            else if (counts[0] === 2) { score = 10; name = "Pair"; }
+
+            return { score, name };
+        }
+
+        function playSelectedHand() {
+            if (!state.selected.length || state.plays <= 0) return;
+            
+            const played = state.selected.map(i => state.hand[i]);
+            
+            played.forEach(card => {
+                if (card.isJoker) {
+                    state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
+                } else if (!card.fromJoker) {
+                    state.cardDiscardPile.push(card);
+                }
+            });
+            
+            const result = getPokerScore(played);
+            state.score += result.score;
+            state.plays--;
+            state.hand = state.hand.filter((_, i) => !state.selected.includes(i));
+            state.selected = [];
+            
+            while (state.hand.length < 8) {
+                state.hand.push(drawCard());
+            }
+            
+            updateUI();
+            renderHand();
+            renderJokers();
+            updateDiscardCounts();
+            
+            if (state.plays <= 0) setTimeout(endRound, 600);
+        }
+
+        function discardSelected() {
+            if (!state.selected.length || state.discards <= 0) return;
+            
+            const discarded = state.selected.map(i => state.hand[i]);
+            discarded.forEach(card => {
+                if (card.isJoker) {
+                    state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
+                } else if (!card.fromJoker) {
+                    state.cardDiscardPile.push(card);
+                }
+            });
+            
+            state.hand = state.hand.filter((_, i) => !state.selected.includes(i));
+            state.selected = [];
+            state.discards--;
+            
+            while (state.hand.length < 8) {
+                state.hand.push(drawCard());
+            }
+            
+            updateUI();
+            renderHand();
+            renderJokers();
+            updateDiscardCounts();
+        }
+
+        function updateUI() {
+            document.getElementById('round').textContent = state.round;
+            document.getElementById('target').textContent = state.target;
+            document.getElementById('score').textContent = state.score;
+            document.getElementById('plays').textContent = state.plays;
+            document.getElementById('discards').textContent = state.discards;
+        }
+
+        function updateDiscardCounts() {
+            document.getElementById('joker-discard-count').textContent = state.jokerDiscardPile.length;
+            document.getElementById('card-discard-count').textContent = state.cardDiscardPile.length;
+        }
+
+        function showDiscardModal(type) {
+            const modal = document.getElementById('discard-modal');
+            const title = document.getElementById('discard-modal-title');
+            const content = document.getElementById('discard-modal-content');
+            
+            content.innerHTML = '';
+            
+            let pile = [];
+            if (type === 'joker') {
+                title.textContent = t('jokerDiscardPile');
+                pile = state.jokerDiscardPile;
+            } else {
+                title.textContent = t('cardDiscardPile');
+                pile = state.cardDiscardPile;
+            }
+            
+            if (pile.length === 0) {
+                content.innerHTML = `<div class="text-center text-zinc-400 py-8">${t('noCardsDiscarded')}</div>`;
+            } else {
+                pile.forEach(card => {
+                    const cardEl = document.createElement('div');
+                    cardEl.className = `card ${card.color || 'black'}`;
+                    if (card.isJoker) {
+                        cardEl.innerHTML = `<div class="text-3xl">🃏</div>`;
+                    } else {
+                        cardEl.innerHTML = `<div class="text-center"><div class="text-xs">${card.rank}</div><div class="text-3xl">${card.suit}</div></div>`;
+                    }
+                    content.appendChild(cardEl);
+                });
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeDiscardModal() {
+            document.getElementById('discard-modal').classList.add('hidden');
+        }
+
+        function endRound() {
+            const excess = state.score - state.target;
+            
+            if (excess >= 0) {
+                showShop(excess);
+            } else {
+                const hasShield = state.abilities.some(a => a.id === "shield");
+                
+                if (hasShield) {
+                    const shieldIndex = state.abilities.findIndex(a => a.id === "shield");
+                    state.abilities.splice(shieldIndex, 1);
+                    renderAbilities();
+                    state.shieldUsed = true;
+                    alert("Shield automatically activated! You survive this round.");
+                    showShop(0);
+                } else {
+                    document.getElementById('final-round').textContent = state.round;
+                    document.getElementById('game-over-modal').classList.remove('hidden');
+                }
+            }
+        }
+
+        function showShop(excess) {
+            const modal = document.getElementById('shop-modal');
+            const list = document.getElementById('shop-list');
+            list.innerHTML = '';
+            
+            document.getElementById('excess-text').innerHTML = 
+                `${t('excess')}: <span class="font-black text-[#ff00aa]">${excess}</span>`;
+            
+            const items = [
+                { id: "extraCard", name: t('extraCard'), cost: 10, isAbility: true },
+                { id: "extraDiscard", name: t('extraDiscard'), cost: 25, isAbility: true },
+                { id: "pocketPoints", name: t('pocketPoints'), cost: 50, isAbility: true },
+                { id: "extraHand", name: t('extraHand'), cost: 75, isAbility: true },
+                { id: "doubleScore", name: t('doubleScore'), cost: 100, isAbility: true },
+                { id: "shield", name: t('shield'), cost: 150, isAbility: true }
+            ];
+            
+            let hasItems = false;
+            items.forEach(item => {
+                const alreadyOwned = state.abilities.some(a => a.id === item.id);
+                if (!alreadyOwned && excess >= item.cost) {
+                    hasItems = true;
+                    const btn = document.createElement('button');
+                    btn.className = `w-full flex justify-between px-5 py-3 border-4 border-white hover:bg-zinc-800 text-left`;
+                    btn.innerHTML = `<span>${item.name}</span><span class="font-black text-[#ff00aa]">${item.cost} pts</span>`;
+                    btn.onclick = () => buyItem(item, excess);
+                    list.appendChild(btn);
+                }
+            });
+            
+            if (!hasItems) {
+                const msg = document.createElement('div');
+                msg.className = 'text-center text-zinc-400 py-4';
+                msg.textContent = t('noItems');
+                list.appendChild(msg);
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function buyItem(item, excess) {
+            state.abilities.push({
+                id: item.id,
+                name: item.name
+            });
+            renderAbilities();
+            
+            const remainingPoints = excess - item.cost;
+            const canBuyMore = checkIfCanBuyMore(remainingPoints);
+            
+            if (canBuyMore) {
+                showShop(remainingPoints);
+            } else {
+                document.getElementById('shop-modal').classList.add('hidden');
+                nextRound();
+            }
+        }
+
+        function checkIfCanBuyMore(points) {
+            const items = [
+                { cost: 10, isAbility: true, id: "extraCard" },
+                { cost: 25, isAbility: true, id: "extraDiscard" },
+                { cost: 50, isAbility: true, id: "pocketPoints" },
+                { cost: 75, isAbility: true, id: "extraHand" },
+                { cost: 100, isAbility: true, id: "doubleScore" },
+                { cost: 150, isAbility: true, id: "shield" }
+            ];
+            
+            return items.some(item => {
+                const alreadyOwned = state.abilities.some(a => a.id === item.id);
+                return !alreadyOwned && points >= item.cost;
+            });
+        }
+
+        function closeShop() {
+            document.getElementById('shop-modal').classList.add('hidden');
+            nextRound();
+        }
+
+        function nextRound() {
+            state.round++;
+            state.target = state.round * 25;
+            state.score = 0;
+            state.plays = 3;
+            state.discards = 3;
+            state.deck = createDeck();
+            shuffle(state.deck);
+            state.jokerDiscardPile = [];
+            state.cardDiscardPile = [];
+            state.shieldUsed = false;
+            drawHand();
+            updateUI();
+            updateDiscardCounts();
+        }
+
+        function restartGame() {
+            document.getElementById('game-over-modal').classList.add('hidden');
+            newGame();
+        }
+
+        window.onload = () => {
+            newGame();
+            updateAllText();
+        };
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a11d272ce8c1f483',t:'MTc4MjQ4Njc3NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
