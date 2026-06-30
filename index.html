@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
-        
+
         body {
             font-family: 'Press Start 2P', system-ui;
             background: #0a0a0a;
         }
-        
+
         .balatro-bg {
             background: linear-gradient(180deg, #1a0033 0%, #0a0a0a 100%);
         }
-        
+
         .card {
             width: 54px;
             height: 76px;
@@ -33,14 +33,14 @@
             box-shadow: 0 6px 10px -3px rgb(0 0 0 / 0.4);
             user-select: none;
         }
-        
+
         @media (min-width: 480px) {
             .card {
                 width: 62px;
                 height: 86px;
             }
         }
-        
+
         @media (min-width: 640px) {
             .card {
                 width: 72px;
@@ -49,79 +49,32 @@
                 border-radius: 10px;
             }
         }
-        
+
         .card.red { color: #e11d48; }
         .card.black { color: #111; }
-        
+
         .card:hover { transform: translateY(-4px); }
         .card.selected {
             transform: translateY(-12px) scale(1.05);
             box-shadow: 0 0 0 4px #ff00aa;
             border-color: #ff00aa;
         }
-        
+
         .joker {
             background: linear-gradient(145deg, #fef08c, #eab308);
             border-color: #713f12;
             color: #713f12;
         }
-        
+
         .stat {
             background: #111;
             border: 3px solid #fff;
         }
-        
+
         .neon-pink {
             text-shadow: 0 0 10px #ff00aa, 0 0 20px #ff00aa;
         }
-        
-        .hand-area {
-            background: #111;
-            border: 4px solid #fff;
-        }
-        
-        .discard-pile {
-            width: 44px;
-            height: 62px;
-            background: #222;
-            border: 3px solid #555;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            cursor: pointer;
-        }
-        
-        @media (min-width: 480px) {
-            .discard-pile {
-                width: 52px;
-                height: 72px;
-            }
-        }
-        
-        @media (min-width: 640px) {
-            .discard-pile {
-                width: 58px;
-                height: 82px;
-                font-size: 10px;
-            }
-        }
-        
-        .ability {
-            background: linear-gradient(145deg, #3b82f6, #1e40af);
-            border: 2px solid #fff;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 9px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .ability:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 3px #ff00aa;
-        }
+
     </style>
 </head>
 <body class="balatro-bg text-white">
@@ -136,7 +89,7 @@
                     <h1 class="text-4xl sm:text-5xl font-black tracking-[-3px] neon-pink">SOLATRO</h1>
                 </div>
             </div>
-            
+
             <div class="flex items-center gap-2 sm:gap-3">
                 <select id="lang-select" onchange="changeLanguage()"
                         class="bg-zinc-900 border-4 border-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
@@ -149,7 +102,7 @@
                     <option value="zh">中文</option>
                     <option value="ru">RU</option>
                 </select>
-                
+
                 <button onclick="showRules()" id="btn-rules"
                         class="px-3 sm:px-5 py-1.5 sm:py-2.5 border-4 border-white hover:bg-white hover:text-black text-xs sm:text-sm">
                     RULES
@@ -183,7 +136,7 @@
 
         <!-- Top Bar -->
         <div class="flex flex-col lg:flex-row justify-between gap-4 mb-4 px-1">
-            
+
             <!-- Banked Jokers -->
             <div>
                 <div class="flex items-center gap-2 mb-1">
@@ -209,7 +162,7 @@
                         <span id="joker-discard-count">0</span>
                     </div>
                 </div>
-                
+
                 <div>
                     <div class="text-xs text-zinc-400 mb-1" id="label-card-discard">CARD DISCARD</div>
                     <div id="card-discard-pile" onclick="showDiscardModal('card')"
@@ -235,8 +188,8 @@
                     </button>
                 </div>
             </div>
-            
-            <div id="hand-area" 
+
+            <div id="hand-area"
                  class="hand-area p-3 sm:p-5 flex flex-wrap gap-2 sm:gap-3 justify-center min-h-[110px] sm:min-h-[140px]">
             </div>
         </div>
@@ -254,11 +207,11 @@
     <div id="discard-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 border-4 border-white p-4 sm:p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
             <h3 class="text-lg sm:text-xl font-black mb-4 text-center" id="discard-modal-title"></h3>
-            
+
             <div id="discard-modal-content" class="grid grid-cols-4 sm:grid-cols-5 gap-2 sm:gap-3 mb-6">
             </div>
-            
-            <button onclick="closeDiscardModal()" 
+
+            <button onclick="closeDiscardModal()"
                     class="w-full py-3 bg-white text-black font-bold border-4 border-white text-sm">
                 <span id="btn-close-discard">CLOSE</span>
             </button>
@@ -269,21 +222,21 @@
     <div id="joker-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 border-4 border-white p-4 sm:p-6 w-full max-w-sm">
             <h3 class="text-center text-lg sm:text-xl font-black mb-4 text-yellow-400" id="joker-modal-title">CHOOSE JOKER VALUE</h3>
-            
+
             <div class="mb-4">
                 <div class="text-xs mb-1 text-zinc-400" id="label-rank">RANK</div>
                 <div id="rank-choices" class="flex flex-wrap gap-1"></div>
             </div>
-            
+
             <div class="mb-6">
                 <div class="text-xs mb-1 text-zinc-400" id="label-suit">SUIT</div>
                 <div id="suit-choices" class="flex gap-2"></div>
             </div>
-            
+
             <div id="joker-error" class="text-red-500 text-xs mb-3 hidden">This card already exists in your hand!</div>
-            
+
             <div class="flex gap-3">
-                <button onclick="cancelJokerChoice()" 
+                <button onclick="cancelJokerChoice()"
                         class="flex-1 py-3 border-4 border-white hover:bg-zinc-800 text-sm">
                     <span id="btn-joker-cancel">CANCEL</span>
                 </button>
@@ -296,16 +249,16 @@
     </div>
 
     <!-- Rules Modal -->
-    <div id="rules-modal" onclick="hideRules()" 
+    <div id="rules-modal" onclick="hideRules()"
          class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-        <div onclick="event.stopImmediatePropagation()" 
+        <div onclick="event.stopImmediatePropagation()"
              class="max-w-2xl w-full bg-zinc-900 border-4 border-white p-4 sm:p-6 text-xs sm:text-sm max-h-[85vh] overflow-y-auto">
             <h2 class="text-xl sm:text-2xl font-black mb-4 text-[#ff00aa]" id="modal-rules-title">SOLATRO RULES</h2>
-            
+
             <div class="space-y-4 leading-relaxed whitespace-pre-line" id="rules-content">
             </div>
-            
-            <button onclick="hideRules()" 
+
+            <button onclick="hideRules()"
                     class="mt-6 w-full py-3 bg-white text-black font-bold border-4 border-white text-sm">
                 <span id="btn-close-rules">CLOSE</span>
             </button>
@@ -331,10 +284,10 @@
             <div class="text-6xl sm:text-7xl mb-4">☠️</div>
             <div class="text-4xl sm:text-5xl font-black mb-3" id="modal-gameover">GAME OVER</div>
             <div class="mb-8 text-lg sm:text-xl">
-                <span id="label-reached">You reached round</span> 
+                <span id="label-reached">You reached round</span>
                 <span id="final-round" class="text-[#ff00aa]"></span>
             </div>
-            <button onclick="restartGame()" 
+            <button onclick="restartGame()"
                     class="px-8 sm:px-10 py-3 sm:py-4 bg-[#ff00aa] text-lg sm:text-xl font-black border-4 border-white">
                 <span id="btn-play-again">PLAY AGAIN</span>
             </button>
@@ -515,9 +468,9 @@
                 state.deck = createDeck();
                 shuffle(state.deck);
             }
-            
+
             let card = state.deck.pop();
-            
+
             if (card.isJoker) {
                 if (state.bankedJokers >= 1) {
                     state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
@@ -527,14 +480,14 @@
                 } else {
                     state.bankedJokers = 1;
                 }
-                
+
                 if (state.deck.length === 0) {
                     state.deck = createDeck();
                     shuffle(state.deck);
                 }
                 card = state.deck.pop();
             }
-            
+
             return card;
         }
 
@@ -662,15 +615,15 @@
         function validateJokerChoice() {
             const errorEl = document.getElementById('joker-error');
             const confirmBtn = document.getElementById('joker-confirm-btn');
-            
+
             if (!chosenJokerRank || !chosenJokerSuit) {
                 errorEl.classList.add('hidden');
                 confirmBtn.disabled = true;
                 return;
             }
 
-            const exists = state.hand.some(card => 
-                card.rank === chosenJokerRank && 
+            const exists = state.hand.some(card =>
+                card.rank === chosenJokerRank &&
                 card.suit === chosenJokerSuit.symbol
             );
 
@@ -713,7 +666,7 @@
         function renderAbilities() {
             const container = document.getElementById('owned-abilities');
             container.innerHTML = '';
-            
+
             state.abilities.forEach((ability, index) => {
                 const el = document.createElement('div');
                 el.className = 'ability text-white text-center cursor-pointer';
@@ -725,7 +678,7 @@
 
         function useAbility(index) {
             const ability = state.abilities[index];
-            
+
             if (ability.id === "extraCard") {
                 state.hand.push(drawCard());
                 renderHand();
@@ -745,7 +698,7 @@
                 state.shieldUsed = true;
                 alert("Shield activated! You are protected from death this round.");
             }
-            
+
             state.abilities.splice(index, 1);
             renderAbilities();
         }
@@ -799,9 +752,9 @@
 
         function playSelectedHand() {
             if (!state.selected.length || state.plays <= 0) return;
-            
+
             const played = state.selected.map(i => state.hand[i]);
-            
+
             played.forEach(card => {
                 if (card.isJoker) {
                     state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
@@ -809,28 +762,28 @@
                     state.cardDiscardPile.push(card);
                 }
             });
-            
+
             const result = getPokerScore(played);
             state.score += result.score;
             state.plays--;
             state.hand = state.hand.filter((_, i) => !state.selected.includes(i));
             state.selected = [];
-            
+
             while (state.hand.length < 8) {
                 state.hand.push(drawCard());
             }
-            
+
             updateUI();
             renderHand();
             renderJokers();
             updateDiscardCounts();
-            
+
             if (state.plays <= 0) setTimeout(endRound, 600);
         }
 
         function discardSelected() {
             if (!state.selected.length || state.discards <= 0) return;
-            
+
             const discarded = state.selected.map(i => state.hand[i]);
             discarded.forEach(card => {
                 if (card.isJoker) {
@@ -839,15 +792,15 @@
                     state.cardDiscardPile.push(card);
                 }
             });
-            
+
             state.hand = state.hand.filter((_, i) => !state.selected.includes(i));
             state.selected = [];
             state.discards--;
-            
+
             while (state.hand.length < 8) {
                 state.hand.push(drawCard());
             }
-            
+
             updateUI();
             renderHand();
             renderJokers();
@@ -871,9 +824,9 @@
             const modal = document.getElementById('discard-modal');
             const title = document.getElementById('discard-modal-title');
             const content = document.getElementById('discard-modal-content');
-            
+
             content.innerHTML = '';
-            
+
             let pile = [];
             if (type === 'joker') {
                 title.textContent = t('jokerDiscardPile');
@@ -882,7 +835,7 @@
                 title.textContent = t('cardDiscardPile');
                 pile = state.cardDiscardPile;
             }
-            
+
             if (pile.length === 0) {
                 content.innerHTML = `<div class="text-center text-zinc-400 py-8">${t('noCardsDiscarded')}</div>`;
             } else {
@@ -897,7 +850,7 @@
                     content.appendChild(cardEl);
                 });
             }
-            
+
             modal.classList.remove('hidden');
         }
 
@@ -907,12 +860,12 @@
 
         function endRound() {
             const excess = state.score - state.target;
-            
+
             if (excess >= 0) {
                 showShop(excess);
             } else {
                 const hasShield = state.abilities.some(a => a.id === "shield");
-                
+
                 if (hasShield) {
                     const shieldIndex = state.abilities.findIndex(a => a.id === "shield");
                     state.abilities.splice(shieldIndex, 1);
@@ -931,10 +884,10 @@
             const modal = document.getElementById('shop-modal');
             const list = document.getElementById('shop-list');
             list.innerHTML = '';
-            
-            document.getElementById('excess-text').innerHTML = 
+
+            document.getElementById('excess-text').innerHTML =
                 `${t('excess')}: <span class="font-black text-[#ff00aa]">${excess}</span>`;
-            
+
             const items = [
                 { id: "extraCard", name: t('extraCard'), cost: 10, isAbility: true },
                 { id: "extraDiscard", name: t('extraDiscard'), cost: 25, isAbility: true },
@@ -943,7 +896,7 @@
                 { id: "doubleScore", name: t('doubleScore'), cost: 100, isAbility: true },
                 { id: "shield", name: t('shield'), cost: 150, isAbility: true }
             ];
-            
+
             let hasItems = false;
             items.forEach(item => {
                 const alreadyOwned = state.abilities.some(a => a.id === item.id);
@@ -956,14 +909,14 @@
                     list.appendChild(btn);
                 }
             });
-            
+
             if (!hasItems) {
                 const msg = document.createElement('div');
                 msg.className = 'text-center text-zinc-400 py-4';
                 msg.textContent = t('noItems');
                 list.appendChild(msg);
             }
-            
+
             modal.classList.remove('hidden');
         }
 
@@ -973,10 +926,10 @@
                 name: item.name
             });
             renderAbilities();
-            
+
             const remainingPoints = excess - item.cost;
             const canBuyMore = checkIfCanBuyMore(remainingPoints);
-            
+
             if (canBuyMore) {
                 showShop(remainingPoints);
             } else {
@@ -994,7 +947,7 @@
                 { cost: 100, isAbility: true, id: "doubleScore" },
                 { cost: 150, isAbility: true, id: "shield" }
             ];
-            
+
             return items.some(item => {
                 const alreadyOwned = state.abilities.some(a => a.id === item.id);
                 return !alreadyOwned && points >= item.cost;
