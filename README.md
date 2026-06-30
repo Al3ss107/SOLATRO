@@ -51,32 +51,6 @@ Built entirely in HTML5 + JavaScript — **zero dependencies, works offline, run
 
 ---
 
-## 🚀 Quick Start
-
-### Run Locally
-
-```bash
-# Clone the repo
-git clone https://github.com/yourusername/solatro.git
-cd solatro
-
-# Start a local server
-python -m http.server 8000
-# or
-npx serve .
-
-# Open http://localhost:8000
-```
-
-### Deploy on Hugging Face Spaces
-
-1. Create a new Space
-2. Select **SDK: Docker**
-3. Upload `index.html` + `Dockerfile`
-4. Done! Your game is live 🎉
-
----
-
 ## 🛠️ Tech Stack
 
 - **HTML5** + **CSS3** + **Vanilla JavaScript**
