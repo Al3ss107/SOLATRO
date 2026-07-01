@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
-
+        
         body {
             font-family: 'Press Start 2P', system-ui;
             background: #0a0a0a;
         }
-
+        
         .balatro-bg {
             background: linear-gradient(180deg, #1a0033 0%, #0a0a0a 100%);
         }
-
+        
         .card {
             width: 54px;
             height: 76px;
@@ -33,14 +33,14 @@
             box-shadow: 0 6px 10px -3px rgb(0 0 0 / 0.4);
             user-select: none;
         }
-
+        
         @media (min-width: 480px) {
             .card {
                 width: 62px;
                 height: 86px;
             }
         }
-
+        
         @media (min-width: 640px) {
             .card {
                 width: 72px;
@@ -49,32 +49,74 @@
                 border-radius: 10px;
             }
         }
-
+        
         .card.red { color: #e11d48; }
         .card.black { color: #111; }
-
+        
         .card:hover { transform: translateY(-4px); }
         .card.selected {
             transform: translateY(-12px) scale(1.05);
             box-shadow: 0 0 0 4px #ff00aa;
             border-color: #ff00aa;
         }
-
+        
         .joker {
             background: linear-gradient(145deg, #fef08c, #eab308);
             border-color: #713f12;
             color: #713f12;
         }
-
+        
         .stat {
             background: #111;
             border: 3px solid #fff;
         }
-
+        
         .neon-pink {
             text-shadow: 0 0 10px #ff00aa, 0 0 20px #ff00aa;
         }
-
+        
+        .discard-pile {
+            width: 44px;
+            height: 62px;
+            background: #222;
+            border: 3px solid #555;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            cursor: pointer;
+        }
+        
+        @media (min-width: 480px) {
+            .discard-pile {
+                width: 52px;
+                height: 72px;
+            }
+        }
+        
+        @media (min-width: 640px) {
+            .discard-pile {
+                width: 58px;
+                height: 82px;
+                font-size: 10px;
+            }
+        }
+        
+        .ability {
+            background: linear-gradient(145deg, #3b82f6, #1e40af);
+            border: 2px solid #fff;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .ability:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px #ff00aa;
+        }
     </style>
 </head>
 <body class="balatro-bg text-white">
@@ -89,7 +131,7 @@
                     <h1 class="text-4xl sm:text-5xl font-black tracking-[-3px] neon-pink">SOLATRO</h1>
                 </div>
             </div>
-
+            
             <div class="flex items-center gap-2 sm:gap-3">
                 <select id="lang-select" onchange="changeLanguage()"
                         class="bg-zinc-900 border-4 border-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
@@ -102,7 +144,7 @@
                     <option value="zh">中文</option>
                     <option value="ru">RU</option>
                 </select>
-
+                
                 <button onclick="showRules()" id="btn-rules"
                         class="px-3 sm:px-5 py-1.5 sm:py-2.5 border-4 border-white hover:bg-white hover:text-black text-xs sm:text-sm">
                     RULES
@@ -136,7 +178,7 @@
 
         <!-- Top Bar -->
         <div class="flex flex-col lg:flex-row justify-between gap-4 mb-4 px-1">
-
+            
             <!-- Banked Jokers -->
             <div>
                 <div class="flex items-center gap-2 mb-1">
@@ -162,7 +204,7 @@
                         <span id="joker-discard-count">0</span>
                     </div>
                 </div>
-
+                
                 <div>
                     <div class="text-xs text-zinc-400 mb-1" id="label-card-discard">CARD DISCARD</div>
                     <div id="card-discard-pile" onclick="showDiscardModal('card')"
@@ -188,8 +230,8 @@
                     </button>
                 </div>
             </div>
-
-            <div id="hand-area"
+            
+            <div id="hand-area" 
                  class="hand-area p-3 sm:p-5 flex flex-wrap gap-2 sm:gap-3 justify-center min-h-[110px] sm:min-h-[140px]">
             </div>
         </div>
@@ -207,11 +249,11 @@
     <div id="discard-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 border-4 border-white p-4 sm:p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
             <h3 class="text-lg sm:text-xl font-black mb-4 text-center" id="discard-modal-title"></h3>
-
+            
             <div id="discard-modal-content" class="grid grid-cols-4 sm:grid-cols-5 gap-2 sm:gap-3 mb-6">
             </div>
-
-            <button onclick="closeDiscardModal()"
+            
+            <button onclick="closeDiscardModal()" 
                     class="w-full py-3 bg-white text-black font-bold border-4 border-white text-sm">
                 <span id="btn-close-discard">CLOSE</span>
             </button>
@@ -222,21 +264,21 @@
     <div id="joker-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
         <div class="bg-zinc-900 border-4 border-white p-4 sm:p-6 w-full max-w-sm">
             <h3 class="text-center text-lg sm:text-xl font-black mb-4 text-yellow-400" id="joker-modal-title">CHOOSE JOKER VALUE</h3>
-
+            
             <div class="mb-4">
                 <div class="text-xs mb-1 text-zinc-400" id="label-rank">RANK</div>
                 <div id="rank-choices" class="flex flex-wrap gap-1"></div>
             </div>
-
+            
             <div class="mb-6">
                 <div class="text-xs mb-1 text-zinc-400" id="label-suit">SUIT</div>
                 <div id="suit-choices" class="flex gap-2"></div>
             </div>
-
+            
             <div id="joker-error" class="text-red-500 text-xs mb-3 hidden">This card already exists in your hand!</div>
-
+            
             <div class="flex gap-3">
-                <button onclick="cancelJokerChoice()"
+                <button onclick="cancelJokerChoice()" 
                         class="flex-1 py-3 border-4 border-white hover:bg-zinc-800 text-sm">
                     <span id="btn-joker-cancel">CANCEL</span>
                 </button>
@@ -249,16 +291,16 @@
     </div>
 
     <!-- Rules Modal -->
-    <div id="rules-modal" onclick="hideRules()"
+    <div id="rules-modal" onclick="hideRules()" 
          class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-        <div onclick="event.stopImmediatePropagation()"
+        <div onclick="event.stopImmediatePropagation()" 
              class="max-w-2xl w-full bg-zinc-900 border-4 border-white p-4 sm:p-6 text-xs sm:text-sm max-h-[85vh] overflow-y-auto">
             <h2 class="text-xl sm:text-2xl font-black mb-4 text-[#ff00aa]" id="modal-rules-title">SOLATRO RULES</h2>
-
+            
             <div class="space-y-4 leading-relaxed whitespace-pre-line" id="rules-content">
             </div>
-
-            <button onclick="hideRules()"
+            
+            <button onclick="hideRules()" 
                     class="mt-6 w-full py-3 bg-white text-black font-bold border-4 border-white text-sm">
                 <span id="btn-close-rules">CLOSE</span>
             </button>
@@ -284,10 +326,10 @@
             <div class="text-6xl sm:text-7xl mb-4">☠️</div>
             <div class="text-4xl sm:text-5xl font-black mb-3" id="modal-gameover">GAME OVER</div>
             <div class="mb-8 text-lg sm:text-xl">
-                <span id="label-reached">You reached round</span>
+                <span id="label-reached">You reached round</span> 
                 <span id="final-round" class="text-[#ff00aa]"></span>
             </div>
-            <button onclick="restartGame()"
+            <button onclick="restartGame()" 
                     class="px-8 sm:px-10 py-3 sm:py-4 bg-[#ff00aa] text-lg sm:text-xl font-black border-4 border-white">
                 <span id="btn-play-again">PLAY AGAIN</span>
             </button>
@@ -328,6 +370,93 @@
                 noCardsDiscarded: "No cards discarded yet",
                 cardAlreadyExists: "This card already exists in your hand!"
             },
+            es: {
+                round: "RONDA", target: "OBJETIVO", score: "PUNTOS", plays: "JUGADAS", discards: "DESCARTES",
+                hand: "TU MANO", discard: "DESCARTAR", play: "JUGAR",
+                end: "FINALIZAR", select: "Selecciona hasta 5 cartas", rules: "REGLAS",
+                shop: "TIENDA BONUS", continue: "CONTINUAR", gameover: "FIN DEL JUEGO",
+                reached: "Llegaste a la ronda",
+                noItems: "No hay artículos disponibles",
+                excess: "Puntos en exceso",
+                extraCard: "Carta Extra",
+                extraDiscard: "Descarte Extra",
+                pocketPoints: "Puntos de Bolsillo (cobra 25 puntos por la ronda)",
+                extraHand: "Mano Extra",
+                doubleScore: "Puntuación Doble",
+                shield: "Escudo",
+                bankedJokers: "COMODINES EN BANCA",
+                ownedAbilities: "HABILIDADES POSEÍDAS",
+                jokerDiscard: "DESCARTES COMODÍN",
+                cardDiscard: "DESCARTES CARTAS",
+                jokerDiscardPile: "PILA DESCARTES COMODÍN",
+                cardDiscardPile: "PILA DESCARTES CARTAS",
+                chooseJokerValue: "ELIGE VALOR COMODÍN",
+                rank: "VALOR",
+                suit: "PALO",
+                cancel: "CANCELAR",
+                confirm: "CONFIRMAR",
+                close: "CERRAR",
+                noCardsDiscarded: "No hay cartas descartadas",
+                cardAlreadyExists: "¡Esta carta ya existe en tu mano!"
+            },
+            fr: {
+                round: "TOUR", target: "OBJECTIF", score: "SCORE", plays: "COUPS", discards: "DÉFAUSSES",
+                hand: "VOTRE MAIN", discard: "DÉFAUSSER", play: "JOUER",
+                end: "FINIR LE TOUR", select: "Sélectionnez jusqu'à 5 cartes", rules: "RÈGLES",
+                shop: "BOUTIQUE BONUS", continue: "CONTINUER", gameover: "PARTIE TERMINÉE",
+                reached: "Vous avez atteint le tour",
+                noItems: "Aucun article disponible",
+                excess: "Points en excès",
+                extraCard: "Carte Extra",
+                extraDiscard: "Défausse Extra",
+                pocketPoints: "Points de Poche (encaisse 25 points pour le tour)",
+                extraHand: "Coup Extra",
+                doubleScore: "Score Double",
+                shield: "Bouclier",
+                bankedJokers: "JOKEURS EN BANQUE",
+                ownedAbilities: "CAPACITÉS POSSESSION",
+                jokerDiscard: "DÉFAUSSES JOKEUR",
+                cardDiscard: "DÉFAUSSES CARTES",
+                jokerDiscardPile: "PILE DÉFAUSSES JOKEUR",
+                cardDiscardPile: "PILE DÉFAUSSES CARTES",
+                chooseJokerValue: "CHOISIR VALEUR JOKEUR",
+                rank: "VALEUR",
+                suit: "COULEUR",
+                cancel: "ANNULER",
+                confirm: "CONFIRMER",
+                close: "FERMER",
+                noCardsDiscarded: "Aucune carte défaussée",
+                cardAlreadyExists: "Cette carte existe déjà dans votre main !"
+            },
+            de: {
+                round: "RUNDE", target: "ZIEL", score: "PUNKTE", plays: "ZÜGE", discards: "ABWÜRFE",
+                hand: "DEINE HAND", discard: "ABLEGEN", play: "SPIELEN",
+                end: "RUNDE BEENDEN", select: "Wähle bis zu 5 Karten", rules: "REGELN",
+                shop: "BONUS-SHOP", continue: "WEITER", gameover: "SPIEL VORBEI",
+                reached: "Du hast Runde erreicht",
+                noItems: "Keine Artikel verfügbar",
+                excess: "Überschüssige Punkte",
+                extraCard: "Extra Karte",
+                extraDiscard: "Extra Abwurf",
+                pocketPoints: "Taschenpunkte (kassiert 25 Punkte für die Runde)",
+                extraHand: "Extra Zug",
+                doubleScore: "Doppelter Score",
+                shield: "Schild",
+                bankedJokers: "JOKER IM BANK",
+                ownedAbilities: "GEKAUFTE FÄHIGKEITEN",
+                jokerDiscard: "JOKER ABWÜRFE",
+                cardDiscard: "KARTEN ABWÜRFE",
+                jokerDiscardPile: "JOKER ABWURFSTAPEL",
+                cardDiscardPile: "KARTEN ABWURFSTAPEL",
+                chooseJokerValue: "JOKER WERT WÄHLEN",
+                rank: "WERT",
+                suit: "FARBE",
+                cancel: "ABBRECHEN",
+                confirm: "BESTÄTIGEN",
+                close: "SCHLIESSEN",
+                noCardsDiscarded: "Keine Karten abgeworfen",
+                cardAlreadyExists: "Diese Karte existiert bereits in deiner Hand!"
+            },
             it: {
                 round: "ROUND", target: "OBIETTIVO", score: "PUNTEGGIO", plays: "GIOCATE", discards: "SCARTI",
                 hand: "LA TUA MANO", discard: "SCARTA", play: "GIOCA",
@@ -356,13 +485,112 @@
                 close: "CHIUDI",
                 noCardsDiscarded: "Nessuna carta scartata",
                 cardAlreadyExists: "Questa carta è già nella tua mano!"
+            },
+            pt: {
+                round: "RODADA", target: "META", score: "PONTOS", plays: "JOGADAS", discards: "DESCARTES",
+                hand: "SUA MÃO", discard: "DESCARTAR", play: "JOGAR",
+                end: "FINALIZAR", select: "Selecione até 5 cartas", rules: "REGRAS",
+                shop: "LOJA DE BÔNUS", continue: "CONTINUAR", gameover: "FIM DE JOGO",
+                reached: "Você chegou na rodada",
+                noItems: "Nenhum item disponível",
+                excess: "Pontos em excesso",
+                extraCard: "Carta Extra",
+                extraDiscard: "Descarte Extra",
+                pocketPoints: "Pontos no Bolso (resgata 25 pontos para a rodada)",
+                extraHand: "Mão Extra",
+                doubleScore: "Pontuação Dupla",
+                shield: "Escudo",
+                bankedJokers: "CORINGAS NO BANCO",
+                ownedAbilities: "HABILIDADES POSSUÍDAS",
+                jokerDiscard: "DESCARTES CORINGA",
+                cardDiscard: "DESCARTES CARTAS",
+                jokerDiscardPile: "PILHA DESCARTES CORINGA",
+                cardDiscardPile: "PILHA DESCARTES CARTAS",
+                chooseJokerValue: "ESCOLHER VALOR CORINGA",
+                rank: "VALOR",
+                suit: "NAIPE",
+                cancel: "CANCELAR",
+                confirm: "CONFIRMAR",
+                close: "FECHAR",
+                noCardsDiscarded: "Nenhuma carta descartada",
+                cardAlreadyExists: "Esta carta já existe na sua mão!"
+            },
+            zh: {
+                round: "回合", target: "目标", score: "分数", plays: "出牌", discards: "弃牌",
+                hand: "你的手牌", discard: "弃牌", play: "出牌",
+                end: "结束回合", select: "选择最多5张牌", rules: "规则",
+                shop: "奖励商店", continue: "继续下一回合", gameover: "游戏结束",
+                reached: "你达到了第",
+                noItems: "没有可用物品",
+                excess: "多余点数",
+                extraCard: "额外卡牌",
+                extraDiscard: "额外弃牌",
+                pocketPoints: "口袋点数（本回合兑换25分）",
+                extraHand: "额外出牌",
+                doubleScore: "双倍得分",
+                shield: "护盾",
+                bankedJokers: "已存小丑",
+                ownedAbilities: "已拥有能力",
+                jokerDiscard: "小丑弃牌",
+                cardDiscard: "卡牌弃牌",
+                jokerDiscardPile: "小丑弃牌堆",
+                cardDiscardPile: "卡牌弃牌堆",
+                chooseJokerValue: "选择小丑数值",
+                rank: "点数",
+                suit: "花色",
+                cancel: "取消",
+                confirm: "确认",
+                close: "关闭",
+                noCardsDiscarded: "尚未弃牌",
+                cardAlreadyExists: "此牌已在你手中！"
+            },
+            ru: {
+                round: "РАУНД", target: "ЦЕЛЬ", score: "СЧЁТ", plays: "ХОДЫ", discards: "СБРОСЫ",
+                hand: "ВАША РУКА", discard: "СБРОСИТЬ", play: "ИГРАТЬ",
+                end: "ЗАВЕРШИТЬ", select: "Выберите до 5 карт", rules: "ПРАВИЛА",
+                shop: "МАГАЗИН БОНУСОВ", continue: "ПРОДОЛЖИТЬ", gameover: "ИГРА ОКОНЧЕНА",
+                reached: "Вы достигли раунда",
+                noItems: "Нет доступных предметов",
+                excess: "Избыточные очки",
+                extraCard: "Дополнительная карта",
+                extraDiscard: "Дополнительный сброс",
+                pocketPoints: "Карманные очки (получить 25 очков за раунд)",
+                extraHand: "Дополнительный ход",
+                doubleScore: "Двойной счёт",
+                shield: "Щит",
+                bankedJokers: "ДЖОКЕРЫ В БАНКЕ",
+                ownedAbilities: "ПРИОБРЕТЁННЫЕ СПОСОБНОСТИ",
+                jokerDiscard: "СБРОС ДЖОКЕРОВ",
+                cardDiscard: "СБРОС КАРТ",
+                jokerDiscardPile: "СТОПКА СБРОСА ДЖОКЕРОВ",
+                cardDiscardPile: "СТОПКА СБРОСА КАРТ",
+                chooseJokerValue: "ВЫБЕРИТЕ ЗНАЧЕНИЕ ДЖОКЕРА",
+                rank: "ЗНАЧЕНИЕ",
+                suit: "МАСТЬ",
+                cancel: "ОТМЕНА",
+                confirm: "ПОДТВЕРДИТЬ",
+                close: "ЗАКРЫТЬ",
+                noCardsDiscarded: "Карты ещё не сбрасывались",
+                cardAlreadyExists: "Эта карта уже есть в вашей руке!"
             }
         };
 
         const rulesTranslations = {
             en: `SOLATRO\n\nEVERYONE loves that popular addictive computer card game, and EVERYONE loves solitaire (obviously), so here's a cheeky way to play a SOLO version of that addictive computer card game with just a regular deck of cards, all by yourself on a Friday night!\n\nGOAL\nSurvive as many rounds as possible by reaching the score target for each round. Targets go up each round, and you use poker hands to earn points toward that target.\n\nSETUP\n- Use a standard 54-card deck, including 2 Jokers.\n- Shuffle the deck.\n- Keep a score sheet to track: round number, bonus points/carryover points from past rounds, and owned tokens. See Bonus Shop.\n\nROUND STRUCTURE\n- Round 1 target: 25 points.\n- Each new round: target increases by +25 points.\n  Round 2 = 50, Round 3 = 75, etc.\n- Start the round by drawing 8 cards into your hand.\n- You get 3 plays per round.\n- You also get 3 discard chances per round, and may discard 1-5 cards each time.\n- After a play or discard, draw back to your hand limit.\n- Play bonus items you've collected during the round.\n- After the round is done, shuffle hand cards and discards back into the deck.\n\nHAND SCORES\nHigh Card: 5\nPair: 10\nTwo Pair: 20\nThree of a Kind: 30\nStraight: 40\nFlush: 50\nFull House: 60\nFour of a Kind: 100\nStraight Flush: 125\nRoyal Flush: 150\n\nPLAYING CARDS\n- On each play, choose up to 5 cards to make a poker hand and record your score.\n- After 3 plays, total your scores.\n- If you meet or beat the round target, you advance.\n- If not, and you have no shield token, you DIE!\n\nJOKERS\n- Jokers are wildcards.\n- If drawn, bank it for later and draw a replacement.\n- A banked Joker can be added to any future play as a wildcard.\n- When used, it is discarded.\n- If you have a banked joker and another shows up, you lose BOTH!\n  Joke's on you DWEEB!\n\nLOSING\nThe game ends when you fail to meet the round's target and have no Shield token.\nYour score is the last round number you reached.\n\nBONUS SHOPPE\n- After the round any EXCESS points beyond the round target can be spent at the bonus shoppe.\n- You can only own 1 of each bonus at a time.\n- You keep your bonus items, but points don't last between rounds.\n\nBONUS SHOPPE ITEMS\nExtra Card: 10\nExtra Discard: 25\nPocket Points: 50 (cash in 25 points for the round)\nExtra Hand: 75\nDouble Score: 100\nShield: 150\n\nRANKS\nCat Food: 3 rounds\nLittle Dweeb: 5 rounds\nOfficial Dweeb: 7 rounds\nUltra Mega Uber Giga-Dweeb: 10+ rounds\n\nHope you had fun!\n\n-TechDweeb`,
 
-            it: `SOLATRO\n\nA tutti piace quel famoso gioco di carte al computer che crea dipendenza, e a TUTTI piace il solitario (ovviamente), quindi ecco un modo spiritoso per giocare una versione SOLO di quel gioco di carte che crea dipendenza con un normale mazzo di carte, tutto da solo un venerdì sera!\n\nOBIETTIVO\nSopravvivi il maggior numero di round possibile raggiungendo l'obiettivo di punteggio per ogni round. Gli obiettivi aumentano ogni round, e usi mani di poker per guadagnare punti verso quell'obiettivo.\n\nPREPARAZIONE\n- Usa un mazzo standard da 54 carte, inclusi 2 Jolly.\n- Mescola il mazzo.\n- Tieni un foglio dei punteggi per tracciare: numero del round, punti bonus/punti residui dai round precedenti e token posseduti. Vedi Negozio Bonus.\n\nSTRUTTURA DEL ROUND\n- Round 1 obiettivo: 25 punti.\n- Ogni nuovo round: l'obiettivo aumenta di +25 punti.\n  Round 2 = 50, Round 3 = 75, ecc.\n- Inizia il round pescando 8 carte nella tua mano.\n- Hai 3 giocate per round.\n- Hai anche 3 possibilità di scarto per round, e puoi scartare da 1 a 5 carte ogni volta.\n- Dopo una giocata o uno scarto, pesca di nuovo fino al limite della mano.\n- Usa gli oggetti bonus che hai collezionato durante il round.\n- Alla fine del round, rimetti le carte della mano e gli scarti nel mazzo e mescola.\n\nPUNTEGGI DELLE MANI\nHigh Card: 5\nCoppia: 10\nDoppia Coppia: 20\nTris: 30\nScala: 40\nColore: 50\nFull: 60\nPoker: 100\nScala Colore: 125\nScala Reale: 150\n\nGIOCARE LE CARTE\n- Ad ogni giocata, scegli fino a 5 carte per formare una mano di poker e registra il tuo punteggio.\n- Dopo 3 giocate, somma i tuoi punteggi.\n- Se raggiungi o superi l'obiettivo del round, avanzi.\n- Se non ci riesci e non hai un token Scudo, MORI!\n\nJOLLY\n- I Jolly sono wild card.\n- Se pescato, mettilo da parte per dopo e pesca una carta sostitutiva.\n- Un Jolly messo da parte può essere aggiunto a qualsiasi giocata futura come wild card.\n- Quando viene usato, viene scartato.\n- Se hai un Jolly da parte e ne esce un altro, PERDI ENTRAMBI!\n  Lo scherzo è su di te, Sfigato!\n\nSCONFITTA\nIl gioco finisce quando non raggiungi l'obiettivo del round e non hai il token Scudo.\nIl tuo punteggio è l'ultimo numero di round raggiunto.\n\nNEGOZIO BONUS\n- Dopo il round, i punti in ECCESSO oltre l'obiettivo del round possono essere spesi nel negozio bonus.\n- Puoi possedere solo 1 di ogni bonus alla volta.\n- Mantieni gli oggetti bonus, ma i punti non durano tra i round.\n\nOGGETTI DEL NEGOZIO BONUS\nExtra Carta: 10\nScarto Extra: 25\nPunti Tascabili: 50 (incassa 25 punti per il round)\nMano Extra: 75\nPunteggio Doppio: 100\nScudo: 150\n\nRANGHI\nCibo per Gatti: 3 round\nPiccolo Sfigato: 5 round\nSfigato Ufficiale: 7 round\nUltra Mega Uber Giga-Sfigato: 10+ round\n\nSpero ti sia divertito!\n\n-TechDweeb`
+            es: `SOLATRO\n\nA todo el mundo le encanta ese popular juego de cartas adictivo para computadora, y a TODO EL MUNDO le encanta el solitario (obviamente), ¡así que aquí hay una forma divertida de jugar una versión SOLO de ese juego de cartas adictivo con solo un mazo de cartas normal, todo por ti mismo un viernes por la noche!\n\nOBJETIVO\nSobrevive la mayor cantidad de rondas posible alcanzando el objetivo de puntuación de cada ronda. Los objetivos aumentan cada ronda, y usas manos de póker para ganar puntos hacia ese objetivo.\n\nPREPARACIÓN\n- Usa un mazo estándar de 54 cartas, incluyendo 2 comodines.\n- Baraja el mazo.\n- Lleva un registro de puntuación para rastrear: número de ronda, puntos de bonificación/puntos sobrantes de rondas anteriores y tokens poseídos. Ver Tienda de Bonus.\n\nESTRUCTURA DE LA RONDA\n- Ronda 1 objetivo: 25 puntos.\n- Cada nueva ronda: el objetivo aumenta +25 puntos.\n  Ronda 2 = 50, Ronda 3 = 75, etc.\n- Comienza la ronda robando 8 cartas a tu mano.\n- Tienes 3 jugadas por ronda.\n- También tienes 3 oportunidades de descarte por ronda, y puedes descartar de 1 a 5 cartas cada vez.\n- Después de jugar o descartar, roba hasta el límite de tu mano.\n- Usa los objetos de bonificación que hayas coleccionado durante la ronda.\n- Al final de la ronda, baraja las cartas de la mano y los descartes de vuelta al mazo.\n\nPUNTUACIONES DE MANO\nHigh Card: 5\nPareja: 10\nDoble Pareja: 20\nTrío: 30\nEscalera: 40\nColor: 50\nFull: 60\nPóker: 100\nEscalera de Color: 125\nEscalera Real: 150\n\nJUGANDO CARTAS\n- En cada jugada, elige hasta 5 cartas para formar una mano de póker y registra tu puntuación.\n- Después de 3 jugadas, suma tus puntuaciones.\n- Si alcanzas o superas el objetivo de la ronda, avanzas.\n- Si no lo logras y no tienes un token Escudo, ¡MUERES!\n\nCOMODINES\n- Los comodines son comodines.\n- Si se roba, guárdalo para más tarde y roba un reemplazo.\n- Un comodín guardado puede añadirse a cualquier jugada futura como comodín.\n- Cuando se usa, se descarta.\n- Si tienes un comodín guardado y sale otro, ¡PIERDES AMBOS!\n  ¡El chiste es para ti, Bicho!\n\nDERROTA\nEl juego termina cuando no alcanzas el objetivo de la ronda y no tienes el token Escudo.\nTu puntuación es el último número de ronda alcanzado.\n\nTIENDA DE BONUS\n- Después de la ronda, cualquier EXCESO de puntos más allá del objetivo de la ronda puede gastarse en la tienda de bonus.\n- Solo puedes poseer 1 de cada bonus a la vez.\n- Mantienes tus objetos de bonus, pero los puntos no duran entre rondas.\n\nOBJETOS DE LA TIENDA DE BONUS\nCarta Extra: 10\nDescarte Extra: 25\nPuntos de Bolsillo: 50 (cobra 25 puntos por la ronda)\nMano Extra: 75\nPuntuación Doble: 100\nEscudo: 150\n\nRANGOS\nComida para Gatos: 3 rondas\nPequeño Bicho: 5 rondas\nBicho Oficial: 7 rondas\nUltra Mega Uber Giga-Bicho: 10+ rondas\n\n¡Espero que te hayas divertido!\n\n-TechDweeb`,
+
+            fr: `SOLATRO\n\nTout le monde adore ce jeu de cartes addictif populaire sur ordinateur, et TOUT LE MONDE adore le solitaire (évidemment), alors voici une façon amusante de jouer une version SOLO de ce jeu de cartes addictif avec juste un jeu de cartes ordinaire, tout seul un vendredi soir !\n\nOBJECTIF\nSurvivez le plus de tours possible en atteignant l'objectif de score pour chaque tour. Les objectifs augmentent à chaque tour, et vous utilisez des mains de poker pour gagner des points vers cet objectif.\n\nPRÉPARATION\n- Utilisez un jeu standard de 54 cartes, y compris 2 jokers.\n- Mélangez le jeu.\n- Gardez une feuille de score pour suivre : numéro du tour, points bonus/points restants des tours précédents et jetons possédés. Voir Boutique Bonus.\n\nSTRUCTURE DU TOUR\n- Tour 1 objectif : 25 points.\n- Chaque nouveau tour : l'objectif augmente de +25 points.\n  Tour 2 = 50, Tour 3 = 75, etc.\n- Commencez le tour en piochant 8 cartes dans votre main.\n- Vous avez 3 coups par tour.\n- Vous avez aussi 3 chances de défausse par tour, et pouvez défausser de 1 à 5 cartes à chaque fois.\n- Après un coup ou une défausse, piochez jusqu'à la limite de votre main.\n- Utilisez les objets bonus que vous avez collectés pendant le tour.\n- À la fin du tour, mélangez les cartes de la main et les défausses dans le jeu.\n\nSCORES DES MAINS\nHigh Card: 5\nPaire: 10\nDouble Paire: 20\nBrelan: 30\nSuite: 40\nCouleur: 50\nFull: 60\nCarré: 100\nQuinte Flush: 125\nQuinte Flush Royale: 150\n\nJOUER LES CARTES\n- À chaque coup, choisissez jusqu'à 5 cartes pour former une main de poker et enregistrez votre score.\n- Après 3 coups, totalisez vos scores.\n- Si vous atteignez ou dépassez l'objectif du tour, vous avancez.\n- Sinon, et si vous n'avez pas de jeton Bouclier, vous MOURREZ !\n\nJOKEURS\n- Les jokers sont des jokers.\n- Si pioché, mettez-le de côté pour plus tard et piochez un remplacement.\n- Un joker mis de côté peut être ajouté à n'importe quel coup futur comme joker.\n- Quand il est utilisé, il est défaussé.\n- Si vous avez un joker mis de côté et qu'un autre apparaît, vous perdez LES DEUX !\n  C'est la blague, Nul !\n\nDÉFAITE\nLe jeu se termine quand vous n'atteignez pas l'objectif du tour et que vous n'avez pas de jeton Bouclier.\nVotre score est le dernier numéro de tour atteint.\n\nBOUTIQUE BONUS\n- Après le tour, tout EXCÉDENT de points au-delà de l'objectif du tour peut être dépensé à la boutique bonus.\n- Vous ne pouvez posséder qu'1 de chaque bonus à la fois.\n- Vous gardez vos objets bonus, mais les points ne durent pas entre les tours.\n\nOBJETS DE LA BOUTIQUE BONUS\nCarte Extra: 10\nDéfausse Extra: 25\nPoints de Poche: 50 (encaisse 25 points pour le tour)\nCoup Extra: 75\nScore Double: 100\nBouclier: 150\n\nRANGS\nNourriture pour Chats: 3 tours\nPetit Nul: 5 tours\nNul Officiel: 7 tours\nUltra Mega Uber Giga-Nul: 10+ tours\n\nJ'espère que vous vous êtes amusé !\n\n-TechDweeb`,
+
+            de: `SOLATRO\n\nJEDER liebt dieses beliebte süchtig machende Computerspiel mit Karten, und JEDER liebt Solitär (offensichtlich), also hier ist eine freche Möglichkeit, eine SOLO-Version dieses süchtig machenden Computerspiels mit nur einem normalen Kartenspiel zu spielen, ganz allein an einem Freitagabend!\n\nZIEL\nÜberlebe so viele Runden wie möglich, indem du das Punktziel für jede Runde erreichst. Die Ziele steigen mit jeder Runde, und du verwendest Pokerhände, um Punkte für dieses Ziel zu sammeln.\n\nAUFBAU\n- Verwende ein Standard-54-Kartenspiel, einschließlich 2 Joker.\n- Mische das Deck.\n- Führe ein Punkteblatt, um zu tracken: Rundennummer, Bonuspunkte/übrig gebliebene Punkte aus vergangenen Runden und besessene Tokens. Siehe Bonus-Shop.\n\nRUNDE-STRUKTUR\n- Runde 1 Ziel: 25 Punkte.\n- Jede neue Runde: Ziel steigt um +25 Punkte.\n  Runde 2 = 50, Runde 3 = 75, usw.\n- Beginne die Runde, indem du 8 Karten in deine Hand ziehst.\n- Du hast 3 Züge pro Runde.\n- Du hast auch 3 Abwurfchancen pro Runde und kannst 1-5 Karten jedes Mal abwerfen.\n- Nach einem Zug oder Abwurf ziehe zurück auf dein Handlimit.\n- Verwende Bonus-Items, die du während der Runde gesammelt hast.\n- Nach der Runde mische Handkarten und Abwürfe zurück ins Deck.\n\nHAND-SCORES\nHigh Card: 5\nPaar: 10\nZwei Paare: 20\nDrilling: 30\nStraße: 40\nFlush: 50\nFull House: 60\nVierer: 100\nStraight Flush: 125\nRoyal Flush: 150\n\nKARTEN SPIELEN\n- Bei jedem Zug wähle bis zu 5 Karten, um eine Pokerhand zu bilden und notiere deine Punkte.\n- Nach 3 Zügen addiere deine Punkte.\n- Wenn du das Rundenziel erreichst oder übertriffst, kommst du weiter.\n- Wenn nicht und du hast keinen Schild-Token, bist du TOT!\n\nJOKER\n- Joker sind Wildcards.\n- Wenn gezogen, banke ihn für später und ziehe einen Ersatz.\n- Ein gebankter Joker kann jeder zukünftigen Hand als Wildcard hinzugefügt werden.\n- Wenn verwendet, wird er abgeworfen.\n- Wenn du einen gebankten Joker hast und ein weiterer erscheint, verlierst du BEIDE!\n  Der Witz ist auf dich, Dweeb!\n\nNIEDERLAGE\nDas Spiel endet, wenn du das Rundenziel nicht erreichst und keinen Schild-Token hast.\nDein Score ist die letzte erreichte Rundennummer.\n\nBONUS-SHOP\n- Nach der Runde können überschüssige Punkte über dem Rundenziel im Bonus-Shop ausgegeben werden.\n- Du kannst nur 1 von jedem Bonus gleichzeitig besitzen.\n- Du behältst deine Bonus-Items, aber Punkte halten nicht zwischen Runden.\n\nBONUS-SHOP ITEMS\nExtra Karte: 10\nExtra Abwurf: 25\nTaschenpunkte: 50 (kassiert 25 Punkte für die Runde)\nExtra Zug: 75\nDoppelter Score: 100\nSchild: 150\n\nRÄNGE\nKatzenfutter: 3 Runden\nKleiner Dweeb: 5 Runden\nOffizieller Dweeb: 7 Runden\nUltra Mega Uber Giga-Dweeb: 10+ Runden\n\nHoffe, du hattest Spaß!\n\n-TechDweeb`,
+
+            it: `SOLATRO\n\nA tutti piace quel famoso gioco di carte al computer che crea dipendenza, e a TUTTI piace il solitario (ovviamente), quindi ecco un modo spiritoso per giocare una versione SOLO di quel gioco di carte che crea dipendenza con un normale mazzo di carte, tutto da solo un venerdì sera!\n\nOBIETTIVO\nSopravvivi il maggior numero di round possibile raggiungendo l'obiettivo di punteggio per ogni round. Gli obiettivi aumentano ogni round, e usi mani di poker per guadagnare punti verso quell'obiettivo.\n\nPREPARAZIONE\n- Usa un mazzo standard da 54 carte, inclusi 2 Jolly.\n- Mescola il mazzo.\n- Tieni un foglio dei punteggi per tracciare: numero del round, punti bonus/punti residui dai round precedenti e token posseduti. Vedi Negozio Bonus.\n\nSTRUTTURA DEL ROUND\n- Round 1 obiettivo: 25 punti.\n- Ogni nuovo round: l'obiettivo aumenta di +25 punti.\n  Round 2 = 50, Round 3 = 75, ecc.\n- Inizia il round pescando 8 carte nella tua mano.\n- Hai 3 giocate per round.\n- Hai anche 3 possibilità di scarto per round, e puoi scartare da 1 a 5 carte ogni volta.\n- Dopo una giocata o uno scarto, pesca di nuovo fino al limite della mano.\n- Usa gli oggetti bonus che hai collezionato durante il round.\n- Alla fine del round, rimetti le carte della mano e gli scarti nel mazzo e mescola.\n\nPUNTEGGI DELLE MANI\nHigh Card: 5\nCoppia: 10\nDoppia Coppia: 20\nTris: 30\nScala: 40\nColore: 50\nFull: 60\nPoker: 100\nScala Colore: 125\nScala Reale: 150\n\nGIOCARE LE CARTE\n- Ad ogni giocata, scegli fino a 5 carte per formare una mano di poker e registra il tuo punteggio.\n- Dopo 3 giocate, somma i tuoi punteggi.\n- Se raggiungi o superi l'obiettivo del round, avanzi.\n- Se non ci riesci e non hai un token Scudo, MORI!\n\nJOLLY\n- I Jolly sono wild card.\n- Se pescato, mettilo da parte per dopo e pesca una carta sostitutiva.\n- Un Jolly messo da parte può essere aggiunto a qualsiasi giocata futura come wild card.\n- Quando viene usato, viene scartato.\n- Se hai un Jolly da parte e ne esce un altro, PERDI ENTRAMBI!\n  Lo scherzo è su di te, Sfigato!\n\nSCONFITTA\nIl gioco finisce quando non raggiungi l'obiettivo del round e non hai il token Scudo.\nIl tuo punteggio è l'ultimo numero di round raggiunto.\n\nNEGOZIO BONUS\n- Dopo il round, i punti in ECCESSO oltre l'obiettivo del round possono essere spesi nel negozio bonus.\n- Puoi possedere solo 1 di ogni bonus alla volta.\n- Mantieni gli oggetti bonus, ma i punti non durano tra i round.\n\nOGGETTI DEL NEGOZIO BONUS\nExtra Carta: 10\nScarto Extra: 25\nPunti Tascabili: 50 (incassa 25 punti per il round)\nMano Extra: 75\nPunteggio Doppio: 100\nScudo: 150\n\nRANGHI\nCibo per Gatti: 3 round\nPiccolo Sfigato: 5 round\nSfigato Ufficiale: 7 round\nUltra Mega Uber Giga-Sfigato: 10+ round\n\nSpero ti sia divertito!\n\n-TechDweeb`,
+
+            pt: `SOLATRO\n\nTodo mundo ama aquele popular jogo de cartas viciante de computador, e TODO MUNDO ama o paciência (obviamente), então aqui está uma maneira divertida de jogar uma versão SOLO daquele jogo de cartas viciante com apenas um baralho normal de cartas, todo sozinho em uma noite de sexta!\n\nOBJETIVO\nSobreviva o máximo de rodadas possível alcançando a meta de pontos de cada rodada. As metas sobem a cada rodada, e você usa mãos de pôquer para ganhar pontos para essa meta.\n\nPREPARAÇÃO\n- Use um baralho padrão de 54 cartas, incluindo 2 coringas.\n- Embaralhe o baralho.\n- Mantenha uma planilha de pontuação para rastrear: número da rodada, pontos de bônus/pontos restantes de rodadas anteriores e tokens possuídos. Veja Loja de Bônus.\n\nESTRUTURA DA RODADA\n- Rodada 1 meta: 25 pontos.\n- Cada nova rodada: a meta aumenta +25 pontos.\n  Rodada 2 = 50, Rodada 3 = 75, etc.\n- Comece a rodada comprando 8 cartas para sua mão.\n- Você tem 3 jogadas por rodada.\n- Você também tem 3 chances de descarte por rodada, e pode descartar de 1 a 5 cartas cada vez.\n- Após uma jogada ou descarte, compre de volta até o limite da mão.\n- Use os itens de bônus que você coletou durante a rodada.\n- Após a rodada, embaralhe as cartas da mão e os descartes de volta no baralho.\n\nPONTUAÇÃO DAS MÃOS\nHigh Card: 5\nPar: 10\nDois Pares: 20\nTrinca: 30\nSequência: 40\nFlush: 50\nFull House: 60\nQuadra: 100\nStraight Flush: 125\nRoyal Flush: 150\n\nJOGANDO AS CARTAS\n- Em cada jogada, escolha até 5 cartas para formar uma mão de pôquer e registre sua pontuação.\n- Após 3 jogadas, some suas pontuações.\n- Se atingir ou superar a meta da rodada, avance.\n- Se não conseguir e não tiver um token Escudo, você MORRE!\n\nCORINGAS\n- Coringas são curingas.\n- Se comprado, guarde para depois e compre um substituto.\n- Um coringa guardado pode ser adicionado a qualquer jogada futura como curinga.\n- Quando used, é descartado.\n- Se você tem um coringa guardado e outro aparece, você PERDE OS DOIS!\n  A piada é para você, Dweeb!\n\nDERROTA\nO jogo termina quando você não atinge a meta da rodada e não tem o token Escudo.\nSua pontuação é o último número de rodada alcançado.\n\nLOJA DE BÔNUS\n- Após a rodada, qualquer EXCESSO de pontos além da meta da rodada pode ser gasto na loja de bônus.\n- Você só pode possuir 1 de cada bônus por vez.\n- Você mantém seus itens de bônus, mas os pontos não duram entre rodadas.\n\nITENS DA LOJA DE BÔNUS\nCarta Extra: 10\nDescarte Extra: 25\nPontos no Bolso: 50 (resgata 25 pontos para a rodada)\nMão Extra: 75\nPontuação Dupla: 100\nEscudo: 150\n\nRANKS\nComida para Gatos: 3 rodadas\nPequeno Dweeb: 5 rodadas\nDweeb Oficial: 7 rodadas\nUltra Mega Uber Giga-Dweeb: 10+ rodadas\n\nEspero que você tenha se divertido!\n\n-TechDweeb`,
+
+            zh: `SOLATRO\n\n每个人都喜欢那个受欢迎的上瘾电脑纸牌游戏，每个人都喜欢纸牌接龙（显然），所以这里有一个有趣的方式来玩那个上瘾电脑纸牌游戏的SOLO版本，只需要一副普通纸牌，周五晚上自己一个人玩！\n\n目标\n通过达到每回合的得分目标来尽可能多地存活。目标每回合都会增加，你使用扑克手牌来赚取分数。\n\n准备\n- 使用标准54张牌的牌组，包括2张小丑。\n- 洗牌。\n- 保留记分表来追踪：回合数、来自之前回合的奖励点数/剩余点数，以及拥有的代币。见奖励商店。\n\n回合结构\n- 第1回合目标：25分。\n- 每个新回合：目标增加+25分。\n  第2回合 = 50，第3回合 = 75，等等。\n- 通过抽取8张牌到你的手中开始回合。\n- 每回合有3次出牌机会。\n- 每回合还有3次弃牌机会，每次可以弃1-5张牌。\n- 出牌或弃牌后，抽回至手牌上限。\n- 使用你在回合中收集的奖励物品。\n- 回合结束后，将手牌和弃牌洗回牌组。\n\n手牌得分\n高牌：5\n对子：10\n两对：20\n三条：30\n顺子：40\n同花：50\n葫芦：60\n四条：100\n同花顺：125\n皇家同花顺：150\n\n出牌\n- 每次出牌，选择最多5张牌组成扑克手牌并记录得分。\n- 3次出牌后，合计得分。\n- 如果达到或超过回合目标，你就晋级。\n- 如果没有达到且没有护盾代币，你就死了！\n\n小丑\n- 小丑是万能牌。\n- 如果抽到，存入银行稍后使用并抽一张替换。\n- 存入的小丑可以作为万能牌添加到任何未来的出牌中。\n- 使用后会被弃掉。\n- 如果你已经存有1张小丑而又抽到另一张，你失去两张！\n  笑话开在你身上，笨蛋！\n\n失败\n当你未能达到回合目标且没有护盾代币时游戏结束。\n你的得分是达到的最后一个回合数。\n\n奖励商店\n- 回合结束后，超过回合目标的任何多余点数可以用于奖励商店。\n- 每种奖励只能拥有1个。\n- 你保留奖励物品，但点数不会在回合间保留。\n\n奖励商店物品\n额外卡牌：10\n额外弃牌：25\n口袋点数：50（本回合兑换25分）\n额外出牌：75\n双倍得分：100\n护盾：150\n\n排名\n猫粮：3回合\n小笨蛋：5回合\n官方笨蛋：7回合\n超级终极究极笨蛋：10+回合\n\n希望你玩得开心！\n\n-TechDweeb`,
+
+            ru: `SOLATRO\n\nВСЕ любят эту популярную вызывающую зависимость компьютерную карточную игру, и ВСЕ любят пасьянс (очевидно), так что вот забавный способ сыграть в СОЛО-версию этой вызывающей зависимость компьютерной карточной игры, используя обычную колоду карт, в одиночку в пятничный вечер!\n\nЦЕЛЬ\nПережить как можно больше раундов, достигая целевого количества очков в каждом раунде. Цели растут с каждым раундом, и вы используете покерные комбинации, чтобы набирать очки.\n\nПОДГОТОВКА\n- Используйте стандартную колоду из 54 карт, включая 2 джокера.\n- Перетасуйте колоду.\n- Ведите таблицу очков, чтобы отслеживать: номер раунда, бонусные очки/оставшиеся очки с прошлых раундов и имеющиеся токены. См. Магазин бонусов.\n\nСТРУКТУРА РАУНДА\n- Раунд 1 цель: 25 очков.\n- Каждый новый раунд: цель увеличивается на +25 очков.\n  Раунд 2 = 50, Раунд 3 = 75 и т.д.\n- Начните раунд, набрав 8 карт в руку.\n- У вас 3 хода за раунд.\n- Также у вас 3 шанса сброса за раунд, и вы можете сбросить от 1 до 5 карт за раз.\n- После хода или сброса доберите до лимита руки.\n- Используйте бонусные предметы, собранные за раунд.\n- В конце раунда перетасуйте карты из руки и сброшенные карты обратно в колоду.\n\nОЦЕНКА КОМБИНАЦИЙ\nСтаршая карта: 5\nПара: 10\nДве пары: 20\nТройка: 30\nСтрит: 40\nФлеш: 50\nФул-хаус: 60\nКаре: 100\nСтрит-флеш: 125\nРоял-флеш: 150\n\nИГРА КАРТАМИ\n- В каждом ходе выберите до 5 карт, чтобы составить покерную комбинацию, и запишите очки.\n- После 3 ходов суммируйте очки.\n- Если вы достигли или превысили цель раунда, продвигаетесь дальше.\n- Если нет и у вас нет токена Щита, вы УМЕРЛИ!\n\nДЖОКЕРЫ\n- Джокеры — дикие карты.\n- Если вытянут, положите его в банк на потом и вытяните замену.\n- Сохранённого джокера можно добавить к любой будущей руке как дикую карту.\n- Когда использован, он сбрасывается.\n- Если у вас уже есть один джокер в банке и выпал ещё один, вы теряете ОБА!\n  Шутка на вас, Двиб!\n\nПОРАЖЕНИЕ\nИгра заканчивается, когда вы не достигаете цели раунда и у вас нет токена Щита.\nВаш счёт — номер последнего достигнутого раунда.\n\nМАГАЗИН БОНУСОВ\n- После раунда любые ИЗБЫТОЧНЫЕ очки сверх цели раунда можно потратить в магазине бонусов.\n- Можно владеть только 1 экземпляром каждого бонуса одновременно.\n- Вы сохраняете бонусные предметы, но очки не переносятся между раундами.\n\nПРЕДМЕТЫ МАГАЗИНА БОНУСОВ\nДополнительная карта: 10\nДополнительный сброс: 25\nКарманные очки: 50 (получить 25 очков за раунд)\nДополнительный ход: 75\nДвойной счёт: 100\nЩит: 150\n\nРАНГИ\nКошачий корм: 3 раунда\nМаленький Двиб: 5 раундов\nОфициальный Двиб: 7 раундов\nУльтра Мега Убер Гига-Двиб: 10+ раундов\n\nНадеюсь, вам понравилось!\n\n-TechDweeb`
         };
 
         function changeLanguage() {
@@ -468,9 +696,9 @@
                 state.deck = createDeck();
                 shuffle(state.deck);
             }
-
+            
             let card = state.deck.pop();
-
+            
             if (card.isJoker) {
                 if (state.bankedJokers >= 1) {
                     state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
@@ -480,14 +708,14 @@
                 } else {
                     state.bankedJokers = 1;
                 }
-
+                
                 if (state.deck.length === 0) {
                     state.deck = createDeck();
                     shuffle(state.deck);
                 }
                 card = state.deck.pop();
             }
-
+            
             return card;
         }
 
@@ -615,15 +843,15 @@
         function validateJokerChoice() {
             const errorEl = document.getElementById('joker-error');
             const confirmBtn = document.getElementById('joker-confirm-btn');
-
+            
             if (!chosenJokerRank || !chosenJokerSuit) {
                 errorEl.classList.add('hidden');
                 confirmBtn.disabled = true;
                 return;
             }
 
-            const exists = state.hand.some(card =>
-                card.rank === chosenJokerRank &&
+            const exists = state.hand.some(card => 
+                card.rank === chosenJokerRank && 
                 card.suit === chosenJokerSuit.symbol
             );
 
@@ -666,7 +894,7 @@
         function renderAbilities() {
             const container = document.getElementById('owned-abilities');
             container.innerHTML = '';
-
+            
             state.abilities.forEach((ability, index) => {
                 const el = document.createElement('div');
                 el.className = 'ability text-white text-center cursor-pointer';
@@ -678,7 +906,7 @@
 
         function useAbility(index) {
             const ability = state.abilities[index];
-
+            
             if (ability.id === "extraCard") {
                 state.hand.push(drawCard());
                 renderHand();
@@ -698,7 +926,7 @@
                 state.shieldUsed = true;
                 alert("Shield activated! You are protected from death this round.");
             }
-
+            
             state.abilities.splice(index, 1);
             renderAbilities();
         }
@@ -752,9 +980,9 @@
 
         function playSelectedHand() {
             if (!state.selected.length || state.plays <= 0) return;
-
+            
             const played = state.selected.map(i => state.hand[i]);
-
+            
             played.forEach(card => {
                 if (card.isJoker) {
                     state.jokerDiscardPile.push({ rank: 'J', suit: '★', color: 'black', isJoker: true });
@@ -762,28 +990,28 @@
                     state.cardDiscardPile.push(card);
                 }
             });
-
+            
             const result = getPokerScore(played);
             state.score += result.score;
             state.plays--;
             state.hand = state.hand.filter((_, i) => !state.selected.includes(i));
             state.selected = [];
-
+            
             while (state.hand.length < 8) {
                 state.hand.push(drawCard());
             }
-
+            
             updateUI();
             renderHand();
             renderJokers();
             updateDiscardCounts();
-
+            
             if (state.plays <= 0) setTimeout(endRound, 600);
         }
 
         function discardSelected() {
             if (!state.selected.length || state.discards <= 0) return;
-
+            
             const discarded = state.selected.map(i => state.hand[i]);
             discarded.forEach(card => {
                 if (card.isJoker) {
@@ -792,15 +1020,15 @@
                     state.cardDiscardPile.push(card);
                 }
             });
-
+            
             state.hand = state.hand.filter((_, i) => !state.selected.includes(i));
             state.selected = [];
             state.discards--;
-
+            
             while (state.hand.length < 8) {
                 state.hand.push(drawCard());
             }
-
+            
             updateUI();
             renderHand();
             renderJokers();
@@ -824,9 +1052,9 @@
             const modal = document.getElementById('discard-modal');
             const title = document.getElementById('discard-modal-title');
             const content = document.getElementById('discard-modal-content');
-
+            
             content.innerHTML = '';
-
+            
             let pile = [];
             if (type === 'joker') {
                 title.textContent = t('jokerDiscardPile');
@@ -835,7 +1063,7 @@
                 title.textContent = t('cardDiscardPile');
                 pile = state.cardDiscardPile;
             }
-
+            
             if (pile.length === 0) {
                 content.innerHTML = `<div class="text-center text-zinc-400 py-8">${t('noCardsDiscarded')}</div>`;
             } else {
@@ -850,7 +1078,7 @@
                     content.appendChild(cardEl);
                 });
             }
-
+            
             modal.classList.remove('hidden');
         }
 
@@ -860,12 +1088,12 @@
 
         function endRound() {
             const excess = state.score - state.target;
-
+            
             if (excess >= 0) {
                 showShop(excess);
             } else {
                 const hasShield = state.abilities.some(a => a.id === "shield");
-
+                
                 if (hasShield) {
                     const shieldIndex = state.abilities.findIndex(a => a.id === "shield");
                     state.abilities.splice(shieldIndex, 1);
@@ -884,10 +1112,10 @@
             const modal = document.getElementById('shop-modal');
             const list = document.getElementById('shop-list');
             list.innerHTML = '';
-
-            document.getElementById('excess-text').innerHTML =
+            
+            document.getElementById('excess-text').innerHTML = 
                 `${t('excess')}: <span class="font-black text-[#ff00aa]">${excess}</span>`;
-
+            
             const items = [
                 { id: "extraCard", name: t('extraCard'), cost: 10, isAbility: true },
                 { id: "extraDiscard", name: t('extraDiscard'), cost: 25, isAbility: true },
@@ -896,7 +1124,7 @@
                 { id: "doubleScore", name: t('doubleScore'), cost: 100, isAbility: true },
                 { id: "shield", name: t('shield'), cost: 150, isAbility: true }
             ];
-
+            
             let hasItems = false;
             items.forEach(item => {
                 const alreadyOwned = state.abilities.some(a => a.id === item.id);
@@ -909,14 +1137,14 @@
                     list.appendChild(btn);
                 }
             });
-
+            
             if (!hasItems) {
                 const msg = document.createElement('div');
                 msg.className = 'text-center text-zinc-400 py-4';
                 msg.textContent = t('noItems');
                 list.appendChild(msg);
             }
-
+            
             modal.classList.remove('hidden');
         }
 
@@ -926,10 +1154,10 @@
                 name: item.name
             });
             renderAbilities();
-
+            
             const remainingPoints = excess - item.cost;
             const canBuyMore = checkIfCanBuyMore(remainingPoints);
-
+            
             if (canBuyMore) {
                 showShop(remainingPoints);
             } else {
@@ -947,7 +1175,7 @@
                 { cost: 100, isAbility: true, id: "doubleScore" },
                 { cost: 150, isAbility: true, id: "shield" }
             ];
-
+            
             return items.some(item => {
                 const alreadyOwned = state.abilities.some(a => a.id === item.id);
                 return !alreadyOwned && points >= item.cost;
@@ -985,5 +1213,5 @@
             updateAllText();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a11d272ce8c1f483',t:'MTc4MjQ4Njc3NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
